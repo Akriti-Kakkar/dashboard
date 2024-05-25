@@ -2,4 +2,3 @@ streamlit
 yfinance
 typing
 time
-functools
