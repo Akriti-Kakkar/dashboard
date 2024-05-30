@@ -3,12 +3,20 @@ import yfinance as yf
 from typing import *
 import time
 import functools
+from streamlit import *
 
 
 class app:
     def __init__(self, ticker='^GSPC'):
         self.ticker = ticker
-
+        
+    @staticmethod
+    def page_config():
+        st.set_page_config(page_title='Dashboard', page_icon='🌎', layout='wide')
+        st.sidebar.image('htts_fund_logo.png', caption='HTTS Fund')
+        st.subheader('🗠 S&P Analysis')
+        st.markdown('##')
+        
     def get_index_info(func):
         @functools.wraps(func)
         def get_news(self):
@@ -23,7 +31,7 @@ class app:
                 else:
                     print('else block')
                     pass
-                time.sleep(10)
+                time.sleep(300)
         return get_news
 
     @get_index_info
@@ -34,7 +42,7 @@ class app:
             news=self.news1[-1]
             ref_news='Latest Headline: \n'+news['title']
             placeholder.info(ref_news, icon='📰')
-            time.sleep(20)
+            time.sleep(360)
 
     @classmethod
     def method(clf):
@@ -44,5 +52,10 @@ class app:
         pass
     
     def main(self):
-        return self.app_interact()
+        return self.page_config(), self.app_interact()
     
+
+def run():
+    initial=app(ticker='^GSPC')
+    return initial.main()
+run()
