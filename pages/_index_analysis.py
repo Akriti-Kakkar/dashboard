@@ -14,7 +14,7 @@ class app:
     def page_config():
         st.set_page_config(page_title='Dashboard', page_icon='🌎', layout='wide')
         st.sidebar.image('htts_fund_logo.png', caption='HTTS Fund')
-        st.subheader('🗠 S&P Analysis')
+        st.subheader('📈 S&P Analysis')
         st.markdown('##')
         
     def get_index_info(func):

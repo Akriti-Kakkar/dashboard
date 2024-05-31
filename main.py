@@ -1,7 +1,12 @@
 import streamlit as st
+from PIL import Image
 def authenticated_menu():
     # Show a navigation menu for authenticated users
-    st.set_page_config(page_title='Dashboard', page_icon='htts_fund_logo.png', layout='wide')
+    st.set_page_config(page_title='Dashboard', page_icon='htts_fund_logo.jpg', layout='wide')
+    # Load your image
+    image = Image.open("htts_fund_logo.png")
+    st.sidebar.image(image, caption="HTTS Fund", output_format="PNG")
+    st.header('Performance Analysis Dashboard')
     st.sidebar.success('Select Any Page From Here')
     st.sidebar.page_link("pages/baskets_analysis.py", label="Compare your baskets with s&p")
     st.sidebar.page_link("pages/_index_analysis.py", label="S&P Analysis")

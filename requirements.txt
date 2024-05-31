@@ -2,3 +2,4 @@ streamlit
 yfinance
 typing
 time
+pillow
