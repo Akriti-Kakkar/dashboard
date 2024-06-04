@@ -4,7 +4,7 @@ from typing import *
 import time
 import functools
 from streamlit import *
-
+import sqlite3
 
 class app:
     def __init__(self, ticker='^GSPC'):
@@ -40,6 +40,8 @@ class app:
             st.success("MWR")
         elif stats=="TWR":
             st.success("TWR")
+    def returns(self):
+        pass
     @get_index_info
     def app_interact(self):
         placeholder=st.empty()
