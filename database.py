@@ -48,7 +48,7 @@ class database:
     def create_historical_prices_table(self) -> None:
         table=self.table_name
         self.cursor.execute(f'''
-            CREATE TABLE IF NOT EXISTS index_prices (
+            CREATE TABLE IF NOT EXISTS {self.table_name} (
                 date DATE PRIMARY KEY NOT NULL,
                 Open FLOAT,
                 High FLOAT,
