@@ -33,7 +33,13 @@ class app:
                     pass
                 time.sleep(300)
         return get_news
-
+    def app_stats(self):
+        stats = st.radio("What type of statistics do you want to view",
+                    ("MWR", "TWR"), horizontal=True)
+        if stats=="MWR":
+            st.success("MWR")
+        elif stats=="TWR":
+            st.success("TWR")
     @get_index_info
     def app_interact(self):
         placeholder=st.empty()
@@ -42,6 +48,7 @@ class app:
             news=self.news1[-1]
             ref_news='Latest Headline: \n'+news['title']
             placeholder.info(ref_news, icon='📰')
+            self.app_stats()
             time.sleep(360)
 
     @classmethod
@@ -52,7 +59,7 @@ class app:
         pass
     
     def main(self):
-        return self.page_config(), self.app_interact()
+        return self.page_config(),  self.app_interact()
     
 
 def run():

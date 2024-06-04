@@ -1,5 +1,6 @@
 import streamlit as st
 from PIL import Image
+import sqlite3
 def authenticated_menu():
     # Show a navigation menu for authenticated users
     st.set_page_config(page_title='Dashboard', page_icon='htts_fund_logo.jpg', layout='wide')
@@ -10,6 +11,9 @@ def authenticated_menu():
     st.sidebar.success('Select Any Page From Here')
     st.sidebar.page_link("pages/baskets_analysis.py", label="Compare your baskets with s&p")
     st.sidebar.page_link("pages/_index_analysis.py", label="S&P Analysis")
+    conn = sqlite3.connect(st.secrets["database"]["database_name"])
+    cursor = conn.cursor()
+    st.write(cursor.execute(f'''SELECT * FROM {st.secrets["database"]["table_name"]}'''))
 
 authenticated_menu()
 
