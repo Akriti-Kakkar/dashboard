@@ -3,16 +3,34 @@ from typing import *
 import yfinance as yf
 import pandas as pd
 import streamlit as st
+import datetime
+from datetime import timedelta
 
 class database:
     def __init__(self, database_name: str, table_name: str, ticker: str) -> None:
         self.database_name = database_name   
         self.table_name = table_name
         self.ticker = ticker
+
+    def get_last_working_day(self) -> None:
+        today = datetime.datetime.today()
+        weekday = today.weekday()
+
+        if weekday == 0:  # Monday
+            days_to_subtract = 3
+        elif weekday == 6:  # Sunday
+            days_to_subtract = 2
+        else:
+            days_to_subtract = 1
+
+        last_working_day = today - datetime.timedelta(days=days_to_subtract)
+        self.last_working_day = last_working_day.date()
+        self.end_date = today.date()
         
     def fetch_data(self) -> pd.DataFrame:
         nifty = yf.Ticker(self.ticker)
-        data = nifty.history(interval='1d', start='2019-01-01', end='2024-06-03')
+        print(self.last_working_day, self.end_date)
+        data = nifty.history(interval='1d', start=str(self.last_working_day), end=str(self.end_date))
         data.to_csv('prices.csv')
         self.data = data
         return data
@@ -61,17 +79,24 @@ class database:
         self.conn.close()
     
 def main() -> object:
-    obj = database(database_name=st.secrets['database_name'], table_name=st.secrets["table_name"],
+    obj = database(database_name=st.secrets["database"]['database_name'], 
+                   table_name=st.secrets["database"]["table_name"],
                    ticker='^GSPC')
     conn = obj.create_connection()
     success = obj.__str__()
     print(conn, success)
-    data = obj.read_all()
- #   data =  obj.fetch_data()
+    date = obj.get_last_working_day()
+    data =  obj.fetch_data()
  #   table = obj.create_historical_prices_table()
- #   rec = obj.insert_records()
+    rec = obj.insert_records()
+    data1 = obj.read_all()
     close = obj.close_connection()
  #   return conn, success, data, table, rec, close
     
-    return conn, data
+    return conn, data, data1
+# data = nifty.history(interval='1d', start='2019-01-01', end='2024-06-03') [historical fill]
 execute = main()
+#import yfinance as yf
+#nifty = yf.Ticker('^GSPC')
+#data = nifty.history(interval='1d', start='2024-05-31', end='2024-06-03')
+#print(data)
