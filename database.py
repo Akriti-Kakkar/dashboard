@@ -5,6 +5,7 @@ import pandas as pd
 import streamlit as st
 import datetime
 from datetime import timedelta
+import os
 
 class database:
     def __init__(self, database_name: str, table_name: str, ticker: str) -> None:
@@ -78,24 +79,9 @@ class database:
         self.conn.commit()
         self.conn.close()
     
-def main() -> object:
-    obj = database(database_name=st.secrets["database"]['database_name'], 
-                   table_name=st.secrets["database"]["table_name"],
-                   ticker='^GSPC')
-    conn = obj.create_connection()
-    success = obj.__str__()
-    print(conn, success)
-    date = obj.get_last_working_day()
-    data =  obj.fetch_data()
- #   table = obj.create_historical_prices_table()
-    rec = obj.insert_records()
-    data1 = obj.read_all()
-    close = obj.close_connection()
- #   return conn, success, data, table, rec, close
-    
-    return conn, data, data1
+
 # data = nifty.history(interval='1d', start='2019-01-01', end='2024-06-03') [historical fill]
-execute = main()
+#execute = main()
 #import yfinance as yf
 #nifty = yf.Ticker('^GSPC')
 #data = nifty.history(interval='1d', start='2024-05-31', end='2024-06-03')
