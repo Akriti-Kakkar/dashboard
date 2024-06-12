@@ -114,13 +114,13 @@ class app:
 
         with col8:
             st.info('High', icon='📌')
-            st.metric('High', value=f'${analysis_data['High'].max():,.0f}') 
+            st.metric('High', value=f"${analysis_data['High'].max():,.0f}") 
             try:
                 ret_ = analysis_data.iloc[-21:]
                 pft = ret_['Close'].iloc[len(ret_)-1]-ret_['Close'].iloc[0] 
                 ret_met = pft/ret_['Close'].iloc[0]
                 st.info('21D Return', icon='📌')
-                st.metric('21D Return', value=f'{ret_met*100:,.2f}%') 
+                st.metric('21D Return', value=f"{ret_met*100:,.2f}%") 
             except IndexError:
                 st.info('21D Return', icon='📌')
                 st.metric('21D Return', value=f'{np.nan}') 
@@ -131,9 +131,9 @@ class app:
             negative_pnl.query('pnl<0', inplace=True)
             pos_pnl = sum(positive_pnl['pnl'])/analysis_data.loc[analysis_data.index.min(), 'Close']
             pos_pnl1 = allocation * pos_pnl             
-            st.metric('Positive PnL (%)', value=f'{pos_pnl*100:,.2f}%')
+            st.metric('Positive PnL (%)', value=f"{pos_pnl*100:,.2f}%")
             st.info('Positive PnL', icon='📌')
-            st.metric('Positive PnL', value=f'${pos_pnl1:,.0f}')      
+            st.metric('Positive PnL', value=f"${pos_pnl1:,.0f}")      
   
         with col9:
             st.info('Low', icon='📌')
@@ -143,22 +143,22 @@ class app:
                 pft1 = ret_1['Close'].iloc[len(ret_1)-1]-ret_1['Close'].iloc[0] 
                 ret_met1 = pft1/ret_1['Close'].iloc[0]
                 st.info('60D Return', icon='📌')
-                st.metric('60D Return', value=f'{ret_met1*100:,.2f}%')    
+                st.metric('60D Return', value=f"{ret_met1*100:,.2f}%")    
             except IndexError:
                 st.info('60D Return', icon='📌')
                 st.metric('60D Return', value=f'{np.nan}') 
             neg_pnl = sum(negative_pnl['pnl'])/analysis_data.loc[analysis_data.index.min(), 'Close'] 
             neg_pnl1 = allocation * neg_pnl
             st.info('Negative PnL (%)', icon='📌')
-            st.metric('Negative PnL (%)', value=f'{neg_pnl*100:,.2f}%')
+            st.metric('Negative PnL (%)', value=f"{neg_pnl*100:,.2f}%")
             st.info('Negative PnL', icon='📌')
-            st.metric('Negative PnL', value=f'${neg_pnl1:,.0f}')
+            st.metric('Negative PnL', value=f"${neg_pnl1:,.0f}")
 
                                              
         with col10:
             st.info('Close', icon='📌')
             try:
-                st.metric('Close', value=f'${analysis_data['Close'].iloc[-1]:,.0f}')   
+                st.metric('Close', value=f"${analysis_data['Close'].iloc[-1]:,.0f}")   
             except IndexError:
                 st.metric('Close', value=f'{np.nan}')   
             finally:                    
@@ -166,15 +166,15 @@ class app:
                 try:
                     pft2 = analysis_data['Close'].iloc[len(analysis_data)-1]-analysis_data['Close'].iloc[0]
                     ret_met2 = pft2/analysis_data['Close'].iloc[0]
-                    st.metric('Period Return', value=f'{ret_met2*100:,.2f}%')  
+                    st.metric('Period Return', value=f"{ret_met2*100:,.2f}%")  
                 except IndexError:
                     st.metric('Period Return', value=f'{np.nan}')   
             pnl_dynamic =  allocation*ret_met2      
             end_value = allocation + pnl_dynamic   
             st.info('PnL', icon='📌')  
-            st.metric('PnL', value=f'${pnl_dynamic:,.0f}')     
+            st.metric('PnL', value=f"${pnl_dynamic:,.0f}")     
             st.info('Ending Value', icon='📌')   
-            st.metric('Ending Value', value=f'${end_value:,.0f}')             
+            st.metric('Ending Value', value=f"${end_value:,.0f}")             
     
     def switch_stats(self):
         stats = st.radio("Choose Type Of Stats",
