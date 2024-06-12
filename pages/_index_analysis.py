@@ -137,7 +137,7 @@ class app:
   
         with col9:
             st.info('Low', icon='📌')
-            st.metric('Low', value=f'${analysis_data['Low'].min():,.0f}')  
+            st.metric('Low', value=f"${analysis_data['Low'].min():,.0f}")  
             try:
                 ret_1 = analysis_data.iloc[-60:]
                 pft1 = ret_1['Close'].iloc[len(ret_1)-1]-ret_1['Close'].iloc[0] 
