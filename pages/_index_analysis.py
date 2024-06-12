@@ -89,7 +89,7 @@ class app:
         with col7:
             st.info('Open', icon='📌')
             try:
-                st.metric('Open', value=f'${analysis_data['Open'].iloc[0]:,.0f}')
+                st.metric('Open', value=f"${analysis_data['Open'].iloc[0]:,.0f}")
             except IndexError:
                 st.metric('Open', value=f'{np.nan}')
             finally:
