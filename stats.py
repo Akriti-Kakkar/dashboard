@@ -31,6 +31,10 @@ def win_pct(win_days: int, duration: int) -> float:
     win_stat = win_days/duration
     return win_stat
 
+def win_loss(win_days: int, loss_days: int) -> float:
+    wl = win_days/loss_days
+    return wl
+
 def max_cons_pos_days():
     pass
 
@@ -39,7 +43,7 @@ def max_cons_neg_days():
 
 def cagr(starting_value: float, ending_value: float, duration: int) -> float:
     n = 252/duration
-    cagr_ret = ((ending_value/starting_value)^n)-1
+    cagr_ret = ((ending_value/starting_value)**n)-1
     return cagr_ret
 
 def stdev(dataframe: pd.DataFrame, col: str) -> float:
@@ -66,7 +70,7 @@ def treynor_ratio():
 def alpha():
     pass
 
-def expected_return():
+def required_return():
     pass
 
 def max_drawdown():

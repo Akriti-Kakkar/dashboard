@@ -10,7 +10,8 @@ import altair as alt
 from datetime import timedelta
 import numpy as np
 import datetime
-from stats import win_days, loss_days, duration, date_range
+from stats import *
+import plotly.express as px
 
 
 class app:
@@ -101,16 +102,19 @@ class app:
             allocation = allocation
             st.info('Positive Days', icon='📌')
             try:
-                st.metric('Positive Days', f"{win_days(analysis_data, 'mwr')} Days")
+                pos_days = win_days(analysis_data, 'mwr')
+                st.metric('Positive Days', f"{pos_days} Days")
             except:
                 st.metric('Positive Days', np.nan)
             st.info('Negative Days', icon='📌')
             try:
-                st.metric('Negative Days', f"{loss_days(analysis_data, 'mwr')} Days")
+                neg_days = loss_days(analysis_data, 'mwr')
+                st.metric('Negative Days', f"{neg_days} Days")
             except:
                 st.metric('Negative Days', np.nan)    
             st.info('Duration', icon='📌')
-            st.metric('Duration', f"{duration(analysis_data.index.min().date(), analysis_data.index.max().date())} Days")          
+            days = duration(analysis_data.index.min().date(), analysis_data.index.max().date())
+            st.metric('Duration', f"{days} Days")          
 
         with col8:
             st.info('High', icon='📌')
@@ -134,6 +138,9 @@ class app:
             st.metric('Positive PnL (%)', value=f"{pos_pnl*100:,.2f}%")
             st.info('Positive PnL', icon='📌')
             st.metric('Positive PnL', value=f"${pos_pnl1:,.0f}")      
+            st.info('Win-Loss Ratio', icon='📌')
+            wl_ratio = win_loss(pos_days, neg_days)
+            st.metric('Win-Loss Ratio', value=f"{wl_ratio:,.2f}")  
   
         with col9:
             st.info('Low', icon='📌')
@@ -153,6 +160,9 @@ class app:
             st.metric('Negative PnL (%)', value=f"{neg_pnl*100:,.2f}%")
             st.info('Negative PnL', icon='📌')
             st.metric('Negative PnL', value=f"${neg_pnl1:,.0f}")
+            win_pctt = win_pct(pos_days, days)
+            st.info('Winning Pct', icon='📌')
+            st.metric('Winning Pct', value=f"{(win_pctt * 100):,.2f}%")            
 
                                              
         with col10:
@@ -174,7 +184,10 @@ class app:
             st.info('PnL', icon='📌')  
             st.metric('PnL', value=f"${pnl_dynamic:,.0f}")     
             st.info('Ending Value', icon='📌')   
-            st.metric('Ending Value', value=f"${end_value:,.0f}")             
+            st.metric('Ending Value', value=f"${end_value:,.0f}")    
+            ann_ret = cagr(allocation, end_value, days)
+            st.info('CAGR', icon='📌')   
+            st.metric('CAGR', value=f"{ann_ret * 100:,.2f}%")            
     
     def switch_stats(self):
         stats = st.radio("Choose Type Of Stats",
@@ -233,7 +246,6 @@ class app:
                 except IndexError:
                     st.write('start date should be less than or equal to end date') 
                 self.placeholders()   
-                st.write(analysis_data)
                 allocation = self.placeholder4.number_input('Initial Allocation', 
                                                 min_value=float(analysis_data['Close'].iloc[0]),
                                                 value=float(analysis_data['Close'].iloc[0]), 
@@ -244,6 +256,13 @@ class app:
                                                 price at day 1. You can modify it to any value
                                                 you want to view''')                                                
                 self.app_stats(analysis_data, allocation) 
+                analysis_data['Daily Money-Weighted Returns'] = analysis_data['mwr'] * 100
+                fig = px.line(analysis_data, y = 'Daily Money-Weighted Returns', x = analysis_data.index,
+                             template='plotly_white')
+                fig.update_layout(plot_bgcolor="#FFFFFF", 
+                                  yaxis_title="Daily Money-Weighted Returns (%)",
+                                  xaxis_title="Date")                  
+                st.plotly_chart(fig)                   
                 
             def view_21():
                 if st.session_state['button'] == True:
@@ -266,7 +285,14 @@ class app:
                                                 min_value=analysis_data['Close'].iloc[0],
                                                 value=analysis_data['Close'].iloc[0],
                                                 step=100000.00)                 
-                self.app_stats(analysis_data, allocation)  
+                self.app_stats(analysis_data, allocation) 
+                analysis_data['Daily Money-Weighted Returns'] = analysis_data['mwr'] * 100
+                fig = px.bar(analysis_data, x = 'Daily Money-Weighted Returns', y = analysis_data.index,
+                             template='plotly_white')
+                fig.update_layout(plot_bgcolor="#FFFFFF", 
+                                  xaxis_title="Daily Money-Weighted Returns (%)",
+                                  yaxis_title="Date")                  
+                st.plotly_chart(fig)                      
                 
             def view_60():
                 analysis_data1 = self.data
@@ -287,8 +313,14 @@ class app:
                                         min_value=float(analysis_data['Close'].iloc[0]),
                                         value= float(analysis_data['Close'].iloc[0]),
                                         max_value=100000000.0000, step=100000.00)
-                st.write(analysis_data)
-                self.app_stats(analysis_data, allocation)                              
+                self.app_stats(analysis_data, allocation)  
+                analysis_data['Daily Money-Weighted Returns'] = analysis_data['mwr'] * 100
+                fig = px.bar(analysis_data, x = 'Daily Money-Weighted Returns', y = analysis_data.index,
+                             template='plotly_white')
+                fig.update_layout(plot_bgcolor="#FFFFFF", 
+                                  xaxis_title="Daily Money-Weighted Returns (%)",
+                                  yaxis_title="Date")                  
+                st.plotly_chart(fig)                      
                            
             button1 = self.placeholder3.button('Last 60 Days')
             button2 = self.placeholder2.button('Last 21 Days')
