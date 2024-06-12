@@ -95,22 +95,22 @@ class app:
             finally:
                 st.info('1D Return', icon='📌')
                 try:
-                    st.metric('1D Return', value=f'{analysis_data['mwr'].iloc[-1]*100:,.2f}%')
+                    st.metric('1D Return', value=f"{analysis_data['mwr'].iloc[-1]*100:,.2f}%")
                 except IndexError:
                     st.metric('1D Return', value=f'{np.nan}')
             allocation = allocation
             st.info('Positive Days', icon='📌')
             try:
-                st.metric('Positive Days', win_days(analysis_data, 'mwr'))
+                st.metric('Positive Days', f"{win_days(analysis_data, 'mwr')} Days")
             except:
                 st.metric('Positive Days', np.nan)
             st.info('Negative Days', icon='📌')
             try:
-                st.metric('Negative Days', loss_days(analysis_data, 'mwr'))
+                st.metric('Negative Days', f"{loss_days(analysis_data, 'mwr')} Days")
             except:
                 st.metric('Negative Days', np.nan)    
             st.info('Duration', icon='📌')
-            st.metric('Duration', duration(analysis_data.index.min().date(), analysis_data.index.max().date()))          
+            st.metric('Duration', f"{duration(analysis_data.index.min().date(), analysis_data.index.max().date())} Days")          
 
         with col8:
             st.info('High', icon='📌')
