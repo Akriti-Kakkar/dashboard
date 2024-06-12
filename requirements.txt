@@ -1,8 +1,6 @@
-streamlit
-yfinance
 typing
-time
 pillow
 altair
 plotly
+yfinance
 
