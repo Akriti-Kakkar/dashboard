@@ -1,7 +1,6 @@
 import streamlit as st
 import yfinance as yf
 from typing import *
-import time
 import functools
 from streamlit import *
 import sqlite3
@@ -39,7 +38,6 @@ class app:
                 else:
                     print('else block')
                     pass
-                time.sleep(300)
         return get_news
     
     def get_data(self):
