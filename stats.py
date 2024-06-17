@@ -61,17 +61,25 @@ def sharpe_ratio(cagr: float, annualized_vol: float) -> float:
 def sortino_ratio():
     pass
 
-def beta():
-    pass
+def beta(stock_ret: float, ind_ret: float) -> float:
+    bet_a = np.cov(stock_ret, ind_ret)
+    return bet_a
 
-def treynor_ratio():
-    pass
+def treynor_ratio(cagr: float, beta: float) -> float:
+    tr = cagr/beta
+    return tr
 
-def alpha():
-    pass
+def alpha(cagr: float, mkt_ret: float) -> float:
+    re = cagr - mkt_ret
+    return re
+    
+def required_return(beta: float, mkt_ret: float) -> float:
+    al = beta * mkt_ret
+    return al
 
-def required_return():
-    pass
+def jenson_alpha(cagr: float, required: float) -> float:
+    je = cagr - required
+    return je
 
 def max_drawdown():
     pass
