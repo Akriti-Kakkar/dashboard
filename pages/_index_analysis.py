@@ -221,8 +221,8 @@ class app:
                            'Sharpe Ratio', 'Sortino Ratio'],
                 
                 'Values' : [f'{active} Days', f'${allocation:,.2f}', f'${0:,.2f}', 
-                            f'${end_all:,.2f}', f'{mn_ret:,.2f}%', f'{stde:,.2f}%',
-                            f'{ret*100:,.2f}%', f'{ann_vol:,.2f}%', f'{shp:,.2f}',
+                            f'${end_all:,.2f}', f'{mn_ret*100:,.2f}%', f'{stde*100:,.2f}%',
+                            f'{ret*100:,.2f}%', f'{ann_vol*100:,.2f}%', f'{shp:,.2f}',
                             0]
             })
             stats_data.index = stats_data.index + 1

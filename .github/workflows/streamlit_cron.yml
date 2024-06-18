@@ -1,10 +1,10 @@
 on:
   schedule:
-    - cron: '30 16 * * 1-5' # At 2:00 PM IST (08:00 UTC) on weekdays
+    - cron: '50 16 * * 1-5' # At 2:00 PM IST (08:00 UTC) on weekdays
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout repo content
         uses: actions/checkout@v2
