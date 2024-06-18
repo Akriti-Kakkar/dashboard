@@ -187,7 +187,37 @@ class app:
             st.metric('Ending Value', value=f"${end_value:,.0f}")    
             ann_ret = cagr(allocation, end_value, days)
             st.info('CAGR', icon='📌')   
-            st.metric('CAGR', value=f"{ann_ret * 100:,.2f}%")            
+            st.metric('CAGR', value=f"{ann_ret * 100:,.2f}%")  
+            
+    def app_stats_mwr(self, analysis_data, allocation):
+        analysis_data['ec'] = (1 + analysis_data['returns']).cumprod() * allocation
+        start = analysis_data.index.min().date()
+        end = analysis_data.index.max().date()
+        st.table(pd.DataFrame({'Starting Date': [start], 'Latest Ending Date': [end]},
+                                  index=['TimeStamps']))
+        mwr_col1, mwr_col2 = st.columns(2)
+        with mwr_col1:
+            fig = px.line(analysis_data, y = 'ec', x = analysis_data.index,
+                            template='plotly_white')
+            fig.update_layout(plot_bgcolor="#FFFFFF", 
+                                yaxis_title="Equity Curve ($)",
+                                xaxis_title="Date")                  
+            st.plotly_chart(fig)  
+        with mwr_col2:
+            active = duration(start, end)
+            end_all = analysis_data.loc[analysis_data.index[-1], 'ec']
+            ret = cagr(allocation, end_all, active)
+            
+            stats_data = pd.DataFrame({
+                'Stats' : ['Duration',
+                           'Starting Value', 'Deposits/Withdrawals',
+                           'Ending Value', 'CAGR'],
+                
+                'Values' : [f'{active} Days', f'${allocation:,.2f}', f'${0:,.2f}', 
+                            f'${end_all:,.2f}', f'{ret*100:,.2f}%']
+            })
+            stats_data.index = stats_data.index + 1
+            st.write(stats_data)
     
     def switch_stats(self):
         stats = st.radio("Choose Type Of Stats",
@@ -360,11 +390,39 @@ class app:
 
         elif stats=="TWR":
             st.success("TWR")
-            try:
-                st.write('Coming soon')
-            except IndexError:
-                st.info('''End date should be greater than or equal to start date. 
-                            Only select historical dates''')
+            self.duration_widgets()  
+            def default():
+                start_date = self.placeholder.date_input('Start Date', self.data.index[0].date(), 
+                                    min_value=self.data.index[0],
+                                    max_value=self.data.index[len(self.data)-1])
+                end_date = self.placeholder1.date_input('End Date', self.data.index[len(self.data)-1],
+                                    min_value=self.data.index[0],
+                                    max_value=self.data.index[len(self.data)-1])   
+                try:
+                    analysis_data1 = self.data.loc[start_date:end_date]
+                    analysis_data = date_range(start_date, end_date, analysis_data1)
+                    analysis_data[['Open', 'High', 'Low', 'Close']] = analysis_data[['Open',
+                                                                                     'High', 'Low',
+                                                                                     'Close']].fillna(
+                    method=('ffill'))
+                    analysis_data[['pnl', 'returns', 'mwr', 'Volume']] = analysis_data[['pnl', 
+                                                                                       'returns', 
+                                                                                       'mwr',
+                                                                                       'Volume']].fillna(0)
+                except IndexError:
+                    st.write('start date should be less than or equal to end date') 
+                self.placeholders()   
+                allocation = self.placeholder4.number_input('Initial Allocation', 
+                                                min_value=float(1.00),
+                                                value=float(100000.00), 
+                                                step=100000.00, max_value=100000000000000000.00,
+                                                help='''
+                                                Assumes that index share was bought in the end
+                                                of day1. Hence, Initial Allocation is close 
+                                                price at day 1. You can modify it to any value
+                                                you want to view''')                                                
+                self.app_stats_mwr(analysis_data, allocation) 
+            default()   
             
     def app_interact(self):                 
         self.get_data()
