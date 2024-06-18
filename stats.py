@@ -47,8 +47,12 @@ def cagr(starting_value: float, ending_value: float, duration: int) -> float:
     return cagr_ret
 
 def stdev(dataframe: pd.DataFrame, col: str) -> float:
-    std = dataframe[col].stdev()
+    std = dataframe[col].std()
     return std
+
+def mu(dataframe: pd.DataFrame, col: str) -> float:
+    mu1 = dataframe[col].mean()
+    return mu1
 
 def annualized_vol(std: float) -> float:
     ann_vol = std * (np.sqrt(252))

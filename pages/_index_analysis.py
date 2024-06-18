@@ -207,14 +207,22 @@ class app:
             active = duration(start, end)
             end_all = analysis_data.loc[analysis_data.index[-1], 'ec']
             ret = cagr(allocation, end_all, active)
+            mn_ret = mu(analysis_data, 'returns')
+            stde = stdev(analysis_data, 'returns')
+            ann_vol = annualized_vol(stde)
+            shp = sharpe_ratio(ret, ann_vol)
+            str = sortino_ratio()
             
             stats_data = pd.DataFrame({
                 'Stats' : ['Duration',
                            'Starting Value', 'Deposits/Withdrawals',
-                           'Ending Value', 'CAGR'],
+                           'Ending Value', 'Mean Return', 'Stdev',
+                           'CAGR', 'Annualized Volatility',
+                           'Sharpe Ratio', 'Sortino Ratio'],
                 
                 'Values' : [f'{active} Days', f'${allocation:,.2f}', f'${0:,.2f}', 
-                            f'${end_all:,.2f}', f'{ret*100:,.2f}%']
+                            f'${end_all:,.2f}', f'{mn_ret:,.2f}%', f'{stde:,.2f}%',
+                            f'{ret*100:,.2f}%', f'{ann_vol:,.2f}%', f'{shp:,.2f}%']
             })
             stats_data.index = stats_data.index + 1
             st.write(stats_data)

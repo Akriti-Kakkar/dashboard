@@ -2,7 +2,7 @@ name: Run Streamlit App
 
 on:
   schedule:
-    - cron: '0 15 * * 1-5' # At 2:00 PM IST (08:00 UTC) on weekdays
+    - cron: '15 15 * * 1-5' # At 2:00 PM IST (08:00 UTC) on weekdays
 
 jobs:
   build:
