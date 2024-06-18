@@ -1,6 +1,6 @@
 on:
   schedule:
-    - cron: '50 16 * * 1-5' # At 2:00 PM IST (08:00 UTC) on weekdays
+    - cron: '25 17 * * 1-5' # At 2:00 PM IST (08:00 UTC) on weekdays
 
 jobs:
   build:
@@ -20,8 +20,8 @@ jobs:
         run: |
           # Parse secrets.toml and extract database_name and table_name
           # Replace the following line with actual code to read the secrets
-          database_name=$(cat secrets.toml | grep 'database_name' | cut -d '=' -f 2 | tr -d ' \t\n')
-          table_name=$(cat secrets.toml | grep 'table_name' | cut -d '=' -f 2 | tr -d ' \t\n')
+          database_name=$(cat .streamlit\secrets.toml | grep 'database_name' | cut -d '=' -f 2 | tr -d ' \t\n')
+          table_name=$(cat .streamlit\secrets.toml | grep 'table_name' | cut -d '=' -f 2 | tr -d ' \t\n')
       - name: Execute Python script
         run: python execute.py
         # Pass the extracted secrets as environment variables

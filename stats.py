@@ -85,8 +85,12 @@ def jenson_alpha(cagr: float, required: float) -> float:
     je = cagr - required
     return je
 
-def max_drawdown():
-    pass
+def drawdown(data: pd.DataFrame, col: str) -> pd.Series:
+    drawdown = data[col]/data[col].cummax()
+    return drawdown
+
+def max_drawdown(drawdown: pd.Series) -> float:
+    md = drawdown
 
 def avg_drawdown():
     pass
