@@ -196,6 +196,10 @@ class app:
         st.table(pd.DataFrame({'Starting Date': [start], 'Latest Ending Date': [end]},
                                   index=['TimeStamps']))
         mwr_col1, mwr_col2 = st.columns(2)
+        st.subheader('Detailed Risk Analysis')
+        st.write('downside deviation', 'avg drawdown', 'max drawdown', 'graph drawdown')
+        st.subheader('Detailed Risk Return Analysis')
+        st.write('sharpe ratio', 'sortino ratio', 'graph returns and std')
         with mwr_col1:
             fig = px.line(analysis_data, y = 'ec', x = analysis_data.index,
                             template='plotly_white')
