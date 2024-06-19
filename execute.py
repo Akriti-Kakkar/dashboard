@@ -16,12 +16,14 @@ def main() -> object:
     obj = database(database_name=st.secrets["database"]['database_name'], 
                    table_name=st.secrets["database"]["table_name"],
                    ticker='^GSPC')
+   
     '''
     print(os.environ.get('DATABASE_NAME'))
     print(os.environ.get('TABLE_NAME'))
     obj = database(database_name=os.environ.get('DATABASE_NAME'), 
                    table_name=os.environ.get('TABLE_NAME'),
-                   ticker='^GSPC')   
+                   ticker='^GSPC')  
+   
     conn = obj.create_connection()
     success = obj.__str__()
     print(conn, success)

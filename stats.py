@@ -35,17 +35,25 @@ def win_loss(win_days: int, loss_days: int) -> float:
     wl = win_days/loss_days
     return wl
 
-def avg_monthly_return(data: pd.DataFrame, col: str) -> float:
+def avg_monthly_twr(data: pd.DataFrame, col: str) -> float:
     data1 = pd.DataFrame(data[col])
     data1['Month'] = data1.index.month
-    gp = data1.groupby(by='Month').agg({col: sum})
-    gp_m1 = gp.mean()
+    data1['ret1'] = 1+data1[col]
+    gp = data1.groupby(by='Month').agg({'ret1': 'prod'})
+    gp1 = gp-1
+    gp_m1 = gp1.mean()
     gp_m = gp_m1[0]
     return gp_m
 
-def last_n_returns():
-    pass
-
+def last_n_twr(data: pd.DataFrame, col: str, n: int) -> float:
+    slice_ = data.iloc[-n:]
+    slice_ret = pd.DataFrame(slice_[col])
+    slice_ret['ret1'] = 1+slice_ret[col]
+    gp = slice_ret.agg({'ret1':'prod'})
+    gp1 = gp-1
+    gp_m = gp1[0]
+    return gp_m
+    
 def cagr(starting_value: float, ending_value: float, duration: int) -> float:
     n = 252/duration
     cagr_ret = ((ending_value/starting_value)**n)-1
