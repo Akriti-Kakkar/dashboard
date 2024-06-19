@@ -62,8 +62,18 @@ def sharpe_ratio(cagr: float, annualized_vol: float) -> float:
     sharpe = cagr/annualized_vol
     return sharpe
 
-def sortino_ratio():
-    pass
+def downside_deviation(data: pd.DataFrame, col: str) -> float:
+    frame1 = data[data[col]<0]
+    frame = frame1[col]
+    frame = frame.reset_index(drop=True)
+    std = frame.std()
+    ann_std = std * (np.sqrt(252))
+    return ann_std
+
+
+def sortino_ratio(ann_ret: float, ann_std: float) -> float:
+    sort1 = ann_ret/ann_std
+    return sort1
 
 def beta(stock_ret: float, ind_ret: float) -> float:
     bet_a = np.cov(stock_ret, ind_ret)
@@ -100,3 +110,36 @@ def max_drawdown(drawdown: pd.Series) -> float:
 def avg_drawdown(drawdown: pd.Series) -> float:
     ad = drawdown.mean()
     return ad
+
+def getMaxLength(arr: pd.Series, input: bool) -> int:
+    '''
+    enter data['returns'] as arr 
+    enter 1 for positive returns, enter 0 for negative returns as input
+    result will max cons occurances of the input in arr
+    '''
+    if input == 1:
+        arr1 = pd.Series(np.where(arr >= 0, 1, 0))
+    elif input == 0:
+        arr1 = pd.Series(np.where(arr < 0, 1, 0))
+        # initialize count
+        count = 0
+
+        # initialize max
+        result = 0
+        n = len(arr1)
+        for i in range(0, n):
+
+            # Reset count when 0 is found
+            if (arr1[i] == 0):
+                count = 0
+
+            # If 1 is found, increment count
+            # and update result if count
+            # becomes more.
+            else:
+
+                # increase count
+                count+= 1
+                result = max(result, count)
+
+        return result

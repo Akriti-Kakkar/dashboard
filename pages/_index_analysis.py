@@ -211,7 +211,6 @@ class app:
             stde = stdev(analysis_data, 'returns')
             ann_vol = annualized_vol(stde)
             shp = sharpe_ratio(ret, ann_vol)
-            str = sortino_ratio()
             dd = drawdown(analysis_data, 'ec')
             mdd = max_drawdown(dd)
             ad = avg_drawdown(dd) 
@@ -219,6 +218,10 @@ class app:
             ln_d = loss_days(analysis_data, 'returns')
             wn = win_pct(wn_d, active)
             wl = win_loss(wn_d, ln_d)
+            dow = downside_deviation(analysis_data, 'returns')
+            sort1 = sortino_ratio(ret, dow)
+            max_cons_pos = getMaxLength(analysis_data['returns'], 1)
+            max_cons_neg = getMaxLength(analysis_data['returns'], 0)
             
             stats_data = pd.DataFrame({
                 'Stats' : ['Duration',
@@ -227,13 +230,15 @@ class app:
                            'CAGR', 'Annualized Volatility',
                            'Sharpe Ratio', 'Sortino Ratio', 
                            'Average Drawworn', 'Maximum Drawdown',
-                           'Winning Pct', 'Win-Loss Ratio'],
+                           'Winning Pct', 'Win-Loss Ratio',
+                           'Max Consecutive Positive Days',
+                           'Max Consecutive Negative Days'],
                 
                 'Values' : [f'{active} Days', f'${allocation:,.2f}', f'${0:,.2f}', 
                             f'${end_all:,.2f}', f'{mn_ret*100:,.2f}%', f'{stde*100:,.2f}%',
                             f'{ret*100:,.2f}%', f'{ann_vol*100:,.2f}%', f'{shp:,.2f}',
-                            0, f'{ad*100:,.2f}%', f'{mdd*100:,.2f}%', f'{wn*100:,.2f}%',
-                            f'{wl:,.2f}']
+                            f'{sort1:,.2f}', f'{ad*100:,.2f}%', f'{mdd*100:,.2f}%', f'{wn*100:,.2f}%',
+                            f'{wl:,.2f}', max_cons_pos, max_cons_neg]
             })
             stats_data.index = stats_data.index + 1
             st.table(stats_data)
