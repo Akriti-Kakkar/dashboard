@@ -86,11 +86,17 @@ def jenson_alpha(cagr: float, required: float) -> float:
     return je
 
 def drawdown(data: pd.DataFrame, col: str) -> pd.Series:
-    drawdown = data[col]/data[col].cummax()
+    '''
+    parse equity curves column and generate a resultant pandas series 
+    appended to you dataframe as well as used independently
+    '''
+    drawdown = (data[col]/data[col].cummax())-1
     return drawdown
 
 def max_drawdown(drawdown: pd.Series) -> float:
-    md = drawdown
+    md = drawdown.min()
+    return md
 
-def avg_drawdown():
-    pass
+def avg_drawdown(drawdown: pd.Series) -> float:
+    ad = drawdown.mean()
+    return ad
