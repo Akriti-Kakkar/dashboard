@@ -1,6 +1,6 @@
 on:
   schedule:
-    - cron: '22 21 * * 1-5' # At 2:00 PM IST (08:00 UTC) on weekdays
+    - cron: '51 21 * * 1-5' # At 2:00 PM IST (08:00 UTC) on weekdays
 
 jobs:
   build:
@@ -29,5 +29,5 @@ jobs:
         run: python execute.py
         # Pass the extracted secrets as environment variables
         env:
-          DATABASE_NAME: secrets.DATABASE_NAME
-          TABLE_NAME: secrets.TABLE_NAME
+          DATABASE_NAME: ${{secrets.DATABASE_NAME}}
+          TABLE_NAME: ${{secrets.TABLE_NAME}}
