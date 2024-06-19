@@ -35,10 +35,15 @@ def win_loss(win_days: int, loss_days: int) -> float:
     wl = win_days/loss_days
     return wl
 
-def max_cons_pos_days():
-    pass
+def avg_monthly_return(data: pd.DataFrame, col: str) -> float:
+    data1 = pd.DataFrame(data[col])
+    data1['Month'] = data1.index.month
+    gp = data1.groupby(by='Month').agg({col: sum})
+    gp_m1 = gp.mean()
+    gp_m = gp_m1[0]
+    return gp_m
 
-def max_cons_neg_days():
+def last_n_returns():
     pass
 
 def cagr(starting_value: float, ending_value: float, duration: int) -> float:
@@ -121,25 +126,26 @@ def getMaxLength(arr: pd.Series, input: bool) -> int:
         arr1 = pd.Series(np.where(arr >= 0, 1, 0))
     elif input == 0:
         arr1 = pd.Series(np.where(arr < 0, 1, 0))
-        # initialize count
-        count = 0
+    
+    # initialize count
+    count = 0
 
-        # initialize max
-        result = 0
-        n = len(arr1)
-        for i in range(0, n):
+    # initialize max
+    result = 0
+    n = len(arr1)
+    for i in range(0, n):
 
-            # Reset count when 0 is found
-            if (arr1[i] == 0):
-                count = 0
+        # Reset count when 0 is found
+        if (arr1[i] == 0):
+            count = 0
 
-            # If 1 is found, increment count
-            # and update result if count
-            # becomes more.
-            else:
+        # If 1 is found, increment count
+        # and update result if count
+        # becomes more.
+        else:
 
-                # increase count
-                count+= 1
-                result = max(result, count)
+            # increase count
+            count+= 1
+            result = max(result, count)
 
-        return result
+    return result

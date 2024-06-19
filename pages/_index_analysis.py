@@ -222,11 +222,14 @@ class app:
             sort1 = sortino_ratio(ret, dow)
             max_cons_pos = getMaxLength(analysis_data['returns'], 1)
             max_cons_neg = getMaxLength(analysis_data['returns'], 0)
+            m_ret = avg_monthly_return(analysis_data, 'returns')
+            print(m_ret)
             
             stats_data = pd.DataFrame({
                 'Stats' : ['Duration',
                            'Starting Value', 'Deposits/Withdrawals',
-                           'Ending Value', 'Mean Return', 'Stdev',
+                           'Ending Value', 'Mean Return', 
+                           'Average Monthly Return', 'Stdev',
                            'CAGR', 'Annualized Volatility',
                            'Sharpe Ratio', 'Sortino Ratio', 
                            'Average Drawworn', 'Maximum Drawdown',
@@ -235,7 +238,8 @@ class app:
                            'Max Consecutive Negative Days'],
                 
                 'Values' : [f'{active} Days', f'${allocation:,.2f}', f'${0:,.2f}', 
-                            f'${end_all:,.2f}', f'{mn_ret*100:,.2f}%', f'{stde*100:,.2f}%',
+                            f'${end_all:,.2f}', f'{mn_ret*100:,.2f}%',
+                            f'{m_ret*100:,.2f}%', f'{stde*100:,.2f}%',
                             f'{ret*100:,.2f}%', f'{ann_vol*100:,.2f}%', f'{shp:,.2f}',
                             f'{sort1:,.2f}', f'{ad*100:,.2f}%', f'{mdd*100:,.2f}%', f'{wn*100:,.2f}%',
                             f'{wl:,.2f}', max_cons_pos, max_cons_neg]
