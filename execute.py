@@ -18,9 +18,9 @@ def main() -> object:
                    ticker='^GSPC')
    
     '''
-    print(os.environ['DATABASE_NAME'])
+    print(os.environ['DATABASE']['DATABASE_NAME'])
     print(os.environ['TABLE_NAME'])
-    obj = database(database_name=os.environ['DATABASE_NAME'], 
+    obj = database(database_name=os.environ['DATABASE']['DATABASE_NAME'], 
                    table_name=os.environ['TABLE_NAME'],
                    ticker='^GSPC')  
    
