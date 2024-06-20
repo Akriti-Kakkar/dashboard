@@ -37,7 +37,7 @@ class database:
         return data
              
     def create_connection(self) -> Tuple[object, object]:
-        conn = sqlite3.connect(self.database_name)
+        conn = sqlite3.connect(f'{self.database_name}')
         cursor = conn.cursor()
         self.conn = conn
         self.cursor = cursor
