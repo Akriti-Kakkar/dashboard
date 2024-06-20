@@ -1,13 +1,13 @@
 on:
   schedule:
-    - cron: '31 8 * * 1-5' # At 2:00 PM IST (08:00 UTC) on weekdays
+    - cron: '47 8 * * 1-5' # At 2:00 PM IST (08:00 UTC) on weekdays
 
 jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      DATABASE_NAME: secrets.DATABASE_NAME
-      TABLE_NAME: secrets.TABLE_NAME
+      DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
+      TABLE_NAME: ${{ secrets.TABLE_NAME }}
     steps:
       - name: Checkout repo content
         uses: actions/checkout@v2
@@ -38,5 +38,5 @@ jobs:
         run: |
           python execute.py
         env:
-          DATABASE_NAME: secrets.DATABASE_NAME
-          TABLE_NAME: secrets.TABLE_NAME
+          DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
+          TABLE_NAME: ${{ secrets.TABLE_NAME }}
