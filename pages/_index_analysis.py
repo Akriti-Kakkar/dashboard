@@ -197,8 +197,12 @@ class app:
                                   index=['TimeStamps']))
         mwr_col1, mwr_col2 = st.columns(2)
         st.subheader('Detailed Risk Analysis')
+        mwr_placeholder = st.empty()
+        mwr_placeholder1 = st.empty()
         st.write('downside deviation', 'avg drawdown', 'max drawdown', 'graph drawdown')
         st.subheader('Detailed Risk Return Analysis')
+        mwr_placeholder2 = st.empty()
+        mwr_placeholder3 = st.empty()
         st.write('sharpe ratio', 'sortino ratio', 'graph returns and std')
         with mwr_col1:
             fig = px.line(analysis_data, y = 'ec', x = analysis_data.index,

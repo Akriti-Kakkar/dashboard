@@ -18,10 +18,10 @@ def main() -> object:
                    ticker='^GSPC')
    
     '''
-    print(os.environ.get('DATABASE_NAME'))
-    print(os.environ.get('TABLE_NAME'))
-    obj = database(database_name=os.environ.get('DATABASE_NAME'), 
-                   table_name=os.environ.get('TABLE_NAME'),
+    print(os.environ['DATABASE_NAME'])
+    print(os.environ['TABLE_NAME'])
+    obj = database(database_name=os.environ['DATABASE_NAME'], 
+                   table_name=os.environ['TABLE_NAME'],
                    ticker='^GSPC')  
    
     conn = obj.create_connection()
