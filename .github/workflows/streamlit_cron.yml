@@ -25,9 +25,15 @@ jobs:
       - name: Show environment 1
         run: |
           env | grep TABLE_NAME
-      - name: Execute Python script
-        run: python execute.py
-        # Pass the extracted secrets as environment variables
-        env:
-          DATABASE_NAME: ${{secrets.DATABASE_NAME}}
-          TABLE_NAME: ${{secrets.TABLE_NAME}}
+      - name: Create python script
+        run: |
+          cat > showenv.py <<'EOF'
+          import os
+
+          print(f'Email username is {os.environ.get("DATABASE_NAME", "<unknown")}')
+          print(f'Email password is {os.environ.get("TABLE_NAME", "<unknown")}')
+          EOF
+
+      - name: Run python script
+        run: |
+          python showenv.py
