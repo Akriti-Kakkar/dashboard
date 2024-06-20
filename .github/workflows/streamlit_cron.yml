@@ -1,6 +1,6 @@
 on:
   schedule:
-    - cron: '51 7 * * 1-5' # At 2:00 PM IST (08:00 UTC) on weekdays
+    - cron: '9 8 * * 1-5' # At 2:00 PM IST (08:00 UTC) on weekdays
 
 jobs:
   build:
