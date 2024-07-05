@@ -12,7 +12,7 @@ def main() -> object:
 
     # Access specific secrets (e.g., API keys)
     print(type(secrets_data)), print(secrets_data['database']['database_name'])
-    
+    '''
     obj = database(database_name=st.secrets["database"]['database_name'], 
                    table_name=st.secrets["database"]["table_name"],
                    ticker='^GSPC')
@@ -23,7 +23,7 @@ def main() -> object:
     obj = database(database_name=os.environ['DATABASE_NAME'], 
                    table_name=os.environ['TABLE_NAME'],
                    ticker='^GSPC')  
-   
+    '''
     conn = obj.create_connection()
     success = obj.__str__()
     print(conn, success)

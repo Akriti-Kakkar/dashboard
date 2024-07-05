@@ -5,3 +5,10 @@ set virtual environment and run python file:
 4. python app.py
 
 # use popover for each basket
+
+[theme]
+primaryColor="#f69256"
+backgroundColor="#c6cccc"
+secondaryBackgroundColor="#1d4e89"
+textColor="#000000"
+font="sans serif"

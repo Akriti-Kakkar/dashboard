@@ -190,27 +190,42 @@ class app:
             st.metric('CAGR', value=f"{ann_ret * 100:,.2f}%")  
             
     def app_stats_mwr(self, analysis_data, allocation):
+        green = [{'selector': 'th', 'props': '''background-color: #1d4e89; color:#FFFFFF;
+            font-weight:bold'''}, {'selector': 'td', 'props': '''text-align: right;
+            font-weight:bold'''}]
+        red = [{'selector': 'th', 'props': 'background-color: red'}]
         analysis_data['ec'] = (1 + analysis_data['returns']).cumprod() * allocation
         start = analysis_data.index.min().date()
         end = analysis_data.index.max().date()
         st.table(pd.DataFrame({'Starting Date': [start], 'Latest Ending Date': [end]},
-                                  index=['TimeStamps']))
+                                  index=['TimeStamps']).style.set_table_styles(green, axis=1))
         mwr_col1, mwr_col2 = st.columns(2)
         st.subheader('Detailed Risk Analysis')
         mwr_placeholder = st.empty()
         mwr_placeholder1 = st.empty()
-        st.write('downside deviation', 'avg drawdown', 'max drawdown', 'graph drawdown')
         st.subheader('Detailed Risk Return Analysis')
         mwr_placeholder2 = st.empty()
         mwr_placeholder3 = st.empty()
-        st.write('sharpe ratio', 'sortino ratio', 'graph returns and std')
         with mwr_col1:
             fig = px.line(analysis_data, y = 'ec', x = analysis_data.index,
-                            template='plotly_white')
+                            template='plotly_white', width=1000)
             fig.update_layout(plot_bgcolor="#FFFFFF", 
                                 yaxis_title="Equity Curve ($)",
-                                xaxis_title="Date")                  
+                                xaxis_title="Date")  
+            fig.update_xaxes(
+                rangeslider_visible=True,
+                rangeselector=dict(
+                    buttons=list([
+                        dict(count=1, label="1m", step="month", stepmode="backward"),
+                        dict(count=6, label="6m", step="month", stepmode="backward"),
+                        dict(count=1, label="YTD", step="year", stepmode="todate"),
+                        dict(count=1, label="1y", step="year", stepmode="backward"),
+                        dict(step="all")
+                    ])
+                )
+            )
             st.plotly_chart(fig)  
+            mwr_placeholder_col1 = st.empty()
         with mwr_col2:
             active = duration(start, end)
             end_all = analysis_data.loc[analysis_data.index[-1], 'ec']
@@ -232,6 +247,9 @@ class app:
             max_cons_neg = getMaxLength(analysis_data['returns'], 0)
             m_ret = avg_monthly_twr(analysis_data, 'returns')
             one_ret = last_n_twr(analysis_data, 'returns', 252)
+            od_ret = last_n_twr(analysis_data, 'returns', 1)
+            t1d_ret = last_n_twr(analysis_data, 'returns', 21)
+            s0d_ret = last_n_twr(analysis_data, 'returns', 60)
             
             stats_data = pd.DataFrame({
                 'Stats' : ['Duration',
@@ -255,7 +273,81 @@ class app:
                             f'{wl:,.2f}', max_cons_pos, max_cons_neg]
             })
             stats_data.index = stats_data.index + 1
+            stats_data = stats_data.style.set_table_styles(green, axis=1)
             st.table(stats_data)
+            stats_data_risk = pd.DataFrame({'Downside Deviation': [dow], 
+                                           'Average Drawdown': [ad],
+                                           'Maximum Drawdown': [mdd]},
+                                           index=['Risk Analysis'])
+            stats_data_risk = stats_data_risk.style.set_table_styles(green, axis=1).set_properties(
+                text_align='right'
+            ).format('{:.2%}')
+            mwr_placeholder.table(stats_data_risk)
+            dd = pd.DataFrame(dd*100)
+            dd = dd.rename(columns = {'ec': 'Drawdown'})
+            dd = dd[dd['Drawdown']!=0]
+            fig = px.histogram(dd, y = 'Drawdown', x = dd.index,
+                            template='ggplot2', histfunc='avg')
+            fig.update_layout(plot_bgcolor="#FFFFFF", 
+                                xaxis_title="Drawdown (%)",
+                                yaxis_title="Date")  
+            fig.update_xaxes(linecolor='red', showgrid=False, rangeslider_visible=True,
+                                             rangeselector=dict(
+                    buttons=list([
+                        dict(count=1, label="1m", step="month", stepmode="backward"),
+                        dict(count=6, label="6m", step="month", stepmode="backward"),
+                        dict(count=1, label="YTD", step="year", stepmode="todate"),
+                        dict(count=1, label="1y", step="year", stepmode="backward"),
+                        dict(step="all")
+                    ])
+                ))
+            fig.update_yaxes(linecolor='blue', showgrid=False)  
+            fig.update_traces(xbins_size="M1")
+            fig.update_xaxes(showgrid=True, ticklabelmode="period", dtick="M1", tickformat="%b\n%Y")
+            fig.update_layout(bargap=0.1)              
+            mwr_placeholder1.plotly_chart(fig)              
+            stats_data_payoff = pd.DataFrame({'Sharpe Ratio': [shp],
+                                              'Sortino Ratio': [sort1]}, 
+                                             index=['Risk-Return Analysis'])
+            stats_data_payoff = stats_data_payoff.style.set_table_styles(green, axis=1).set_properties(
+                subset=['Sharpe Ratio', 'Sortino Ratio'], text_align='right'
+            ).format('{:.2}')
+            mwr_placeholder2.table(stats_data_payoff) 
+            analysis_data['std'] = analysis_data['returns'].rolling(window=5).std()
+            analysis_data['roll_mean'] = analysis_data['returns'].rolling(window=5).mean()
+            analysis_data['roll_sharpe'] = analysis_data['roll_mean']/analysis_data['std']
+            fig = px.histogram(analysis_data, y = 'roll_sharpe', x = analysis_data.index,
+                            template='ggplot2', histfunc='avg')
+            fig.update_layout(plot_bgcolor="#FFFFFF", 
+                                xaxis_title="Sharpe Ratio",
+                                yaxis_title="Date")  
+            fig.update_xaxes(linecolor='green', showgrid=False, rangeslider_visible=True,
+                                             rangeselector=dict(
+                    buttons=list([
+                        dict(count=1, label="1m", step="month", stepmode="backward"),
+                        dict(count=6, label="6m", step="month", stepmode="backward"),
+                        dict(count=1, label="YTD", step="year", stepmode="todate"),
+                        dict(count=1, label="1y", step="year", stepmode="backward"),
+                        dict(step="all")
+                    ])
+                ))
+            fig.update_yaxes( linecolor='blue', showgrid=False)  
+            fig.update_traces(xbins_size="M1")
+            fig.update_xaxes(showgrid=True, ticklabelmode="period", dtick="M1", tickformat="%b\n%Y")
+            fig.update_layout(bargap=0.1)     
+            mwr_placeholder3.plotly_chart(fig)   
+            stats_data_ret = pd.DataFrame(data=[od_ret, 
+                                                t1d_ret, 
+                                                s0d_ret],
+                                          index=['Last 1D Ret', 'Last 21D Ret', 'Last 60D Ret'],
+                                          columns=['Returns (%)'])  
+            stats_data_ret.index.name = 'Duration'  
+            stats_data_ret = stats_data_ret.style.set_table_styles(green, axis=1).set_properties(
+                subset=['Returns (%)'], text_align='right'
+            ).format('{:.2%}')
+
+            #mwr_placeholder_col1.table(stats_data_ret)  
+            mwr_placeholder_col1.table(stats_data_ret)
     
     def switch_stats(self):
         stats = st.radio("Choose Type Of Stats",
@@ -301,18 +393,19 @@ class app:
                                     min_value=self.data.index[0],
                                     max_value=self.data.index[len(self.data)-1])   
                 try:
-                    analysis_data1 = self.data.loc[start_date:end_date]
-                    analysis_data = date_range(start_date, end_date, analysis_data1)
-                    analysis_data[['Open', 'High', 'Low', 'Close']] = analysis_data[['Open',
+                    analysis_data_all = self.data
+                    analysis_data11 = date_range(start_date, end_date, analysis_data_all)
+                    analysis_data11[['Open', 'High', 'Low', 'Close']] = analysis_data11[['Open',
                                                                                      'High', 'Low',
                                                                                      'Close']].fillna(
                     method=('ffill'))
-                    analysis_data[['pnl', 'returns', 'mwr', 'Volume']] = analysis_data[['pnl', 
+                    analysis_data11[['pnl', 'returns', 'mwr', 'Volume']] = analysis_data11[['pnl', 
                                                                                        'returns', 
                                                                                        'mwr',
                                                                                        'Volume']].fillna(0)
                 except IndexError:
                     st.write('start date should be less than or equal to end date') 
+                analysis_data = analysis_data11.loc[start_date:end_date]
                 self.placeholders()   
                 allocation = self.placeholder4.number_input('Initial Allocation', 
                                                 min_value=float(analysis_data['Close'].iloc[0]),
@@ -322,15 +415,41 @@ class app:
                                                 Assumes that index share was bought in the end
                                                 of day1. Hence, Initial Allocation is close 
                                                 price at day 1. You can modify it to any value
-                                                you want to view''')                                                
+                                                you want to view''') 
+                # Add css to make text bigger
+                st.markdown(
+                    """
+                    <style>
+                    textarea {
+                        font-size: 2rem !important;
+                    }
+                    input {
+                        font-size: 1.5rem !important;
+                    }                      
+                    </style>
+                    """,
+                    unsafe_allow_html=True,
+                )        
+                                                                       
                 self.app_stats(analysis_data, allocation) 
                 analysis_data['Daily Money-Weighted Returns'] = analysis_data['mwr'] * 100
                 fig = px.line(analysis_data, y = 'Daily Money-Weighted Returns', x = analysis_data.index,
                              template='plotly_white')
                 fig.update_layout(plot_bgcolor="#FFFFFF", 
                                   yaxis_title="Daily Money-Weighted Returns (%)",
-                                  xaxis_title="Date")                  
-                st.plotly_chart(fig)                   
+                                  xaxis_title="Date")     
+                fig.update_xaxes(linecolor='green', showgrid=False, rangeslider_visible=True,
+                                                rangeselector=dict(
+                        buttons=list([
+                            dict(count=1, label="1m", step="month", stepmode="backward"),
+                            dict(count=6, label="6m", step="month", stepmode="backward"),
+                            dict(count=1, label="YTD", step="year", stepmode="todate"),
+                            dict(count=1, label="1y", step="year", stepmode="backward"),
+                            dict(step="all")
+                        ])
+                    ))
+                fig.update_yaxes( linecolor='blue', showgrid=False)                                  
+                st.plotly_chart(fig)            
                 
             def view_21():
                 if st.session_state['button'] == True:
@@ -339,27 +458,56 @@ class app:
                 start_date = analysis_data1.index.min()
                 end_date = analysis_data1.index.max()
                 analysis_data11 = date_range(start_date, end_date, analysis_data1)
-                analysis_data = analysis_data11.iloc[-21:]
-                analysis_data[['Open', 'High', 'Low', 'Close']] = analysis_data[['Open',
+                analysis_data11[['Open', 'High', 'Low', 'Close']] = analysis_data11[['Open',
                                                                                     'High', 'Low',
                                                                                     'Close']].fillna(
                 method=('ffill'))
-                analysis_data[['pnl', 'returns', 'mwr', 'Volume']] = analysis_data[['pnl', 
+                analysis_data11[['pnl', 'returns', 'mwr', 'Volume']] = analysis_data11[['pnl', 
                                                                                     'returns', 
                                                                                     'mwr',
-                                                                                    'Volume']].fillna(0)                
+                                                                                    'Volume']].fillna(0)    
+                analysis_data = analysis_data11.iloc[-21:]            
                 self.placeholders()
                 allocation = self.placeholder4.number_input('Initial Allocation', 
                                                 min_value=analysis_data['Close'].iloc[0],
                                                 value=analysis_data['Close'].iloc[0],
-                                                step=100000.00)                 
+                                                step=100000.00)   
+                # Add css to make text bigger
+                st.markdown(
+                    """
+                    <style>
+                    textarea {
+                        font-size: 2rem !important;
+                    }
+                    input {
+                        font-size: 1.5rem !important;
+                    }                      
+                    </style>
+                    """,
+                    unsafe_allow_html=True,
+                )        
+                                                      
                 self.app_stats(analysis_data, allocation) 
                 analysis_data['Daily Money-Weighted Returns'] = analysis_data['mwr'] * 100
-                fig = px.bar(analysis_data, x = 'Daily Money-Weighted Returns', y = analysis_data.index,
-                             template='plotly_white')
+                fig = px.histogram(analysis_data, y = 'Daily Money-Weighted Returns', x = analysis_data.index,
+                             template='plotly_white', histfunc=None)
                 fig.update_layout(plot_bgcolor="#FFFFFF", 
-                                  xaxis_title="Daily Money-Weighted Returns (%)",
-                                  yaxis_title="Date")                  
+                                  yaxis_title="Daily Money-Weighted Returns (%)",
+                                  xaxis_title="Date")  
+                fig.update_xaxes(linecolor='green', showgrid=False, rangeslider_visible=True,
+                                                rangeselector=dict(
+                        buttons=list([
+                            dict(count=1, label="1m", step="month", stepmode="backward"),
+                            dict(count=6, label="6m", step="month", stepmode="backward"),
+                            dict(count=1, label="YTD", step="year", stepmode="todate"),
+                            dict(count=1, label="1y", step="year", stepmode="backward"),
+                            dict(step="all")
+                        ])
+                    ))
+                fig.update_yaxes( linecolor='blue', showgrid=False)  
+                fig.update_traces(xbins_size="D1")
+                fig.update_yaxes(showgrid=True, ticklabelmode="period", dtick="D1", tickformat="%b\n%Y")
+                fig.update_layout(bargap=0.1)                                     
                 st.plotly_chart(fig)                      
                 
             def view_60():
@@ -367,27 +515,56 @@ class app:
                 start_date = analysis_data1.index.min()
                 end_date = analysis_data1.index.max()
                 analysis_data11 = date_range(start_date, end_date, analysis_data1)
-                analysis_data = analysis_data11.iloc[-60:]
-                analysis_data[['Open', 'High', 'Low', 'Close']] = analysis_data[['Open',
+                analysis_data11[['Open', 'High', 'Low', 'Close']] = analysis_data11[['Open',
                                                                                     'High', 'Low',
                                                                                     'Close']].fillna(
                 method=('ffill'))
-                analysis_data[['pnl', 'returns', 'mwr', 'Volume']] = analysis_data[['pnl', 
+                analysis_data11[['pnl', 'returns', 'mwr', 'Volume']] = analysis_data11[['pnl', 
                                                                                     'returns', 
                                                                                     'mwr',
-                                                                                    'Volume']].fillna(0)                
+                                                                                    'Volume']].fillna(0)  
+                analysis_data = analysis_data11.iloc[-60:]              
                 self.placeholders() 
                 allocation = self.placeholder4.number_input('Initial Allocation', 
                                         min_value=float(analysis_data['Close'].iloc[0]),
                                         value= float(analysis_data['Close'].iloc[0]),
                                         max_value=100000000.0000, step=100000.00)
+                # Add css to make text bigger
+                st.markdown(
+                    """
+                    <style>
+                    textarea {
+                        font-size: 2rem !important;
+                    }
+                    input {
+                        font-size: 1.5rem !important;
+                    }                      
+                    </style>
+                    """,
+                    unsafe_allow_html=True,
+                )        
+                                        
                 self.app_stats(analysis_data, allocation)  
                 analysis_data['Daily Money-Weighted Returns'] = analysis_data['mwr'] * 100
-                fig = px.bar(analysis_data, x = 'Daily Money-Weighted Returns', y = analysis_data.index,
+                fig = px.histogram(analysis_data, y = 'Daily Money-Weighted Returns', x = analysis_data.index,
                              template='plotly_white')
                 fig.update_layout(plot_bgcolor="#FFFFFF", 
-                                  xaxis_title="Daily Money-Weighted Returns (%)",
-                                  yaxis_title="Date")                  
+                                  yaxis_title="Daily Money-Weighted Returns (%)",
+                                  xaxis_title="Date")  
+                fig.update_xaxes(linecolor='green', showgrid=False, rangeslider_visible=True,
+                                                rangeselector=dict(
+                        buttons=list([
+                            dict(count=1, label="1m", step="month", stepmode="backward"),
+                            dict(count=6, label="6m", step="month", stepmode="backward"),
+                            dict(count=1, label="YTD", step="year", stepmode="todate"),
+                            dict(count=1, label="1y", step="year", stepmode="backward"),
+                            dict(step="all")
+                        ])
+                    ))
+                fig.update_yaxes( linecolor='blue', showgrid=False)  
+                fig.update_traces(xbins_size="D1")
+                fig.update_yaxes(showgrid=True, ticklabelmode="period", dtick="D1", tickformat="%b\n%Y")
+                fig.update_layout(bargap=0.1)                 
                 st.plotly_chart(fig)                      
                            
             button1 = self.placeholder3.button('Last 60 Days')
@@ -429,7 +606,7 @@ class app:
         elif stats=="TWR":
             st.success("TWR")
             self.duration_widgets()  
-            def default():
+            def default_twr():
                 start_date = self.placeholder.date_input('Start Date', self.data.index[0].date(), 
                                     min_value=self.data.index[0],
                                     max_value=self.data.index[len(self.data)-1])
@@ -437,20 +614,21 @@ class app:
                                     min_value=self.data.index[0],
                                     max_value=self.data.index[len(self.data)-1])   
                 try:
-                    analysis_data1 = self.data.loc[start_date:end_date]
-                    analysis_data = date_range(start_date, end_date, analysis_data1)
-                    analysis_data[['Open', 'High', 'Low', 'Close']] = analysis_data[['Open',
+                    analysis_data_all = self.data
+                    analysis_data11 = date_range(start_date, end_date, analysis_data_all)
+                    analysis_data11[['Open', 'High', 'Low', 'Close']] = analysis_data11[['Open',
                                                                                      'High', 'Low',
                                                                                      'Close']].fillna(
                     method=('ffill'))
-                    analysis_data[['pnl', 'returns', 'mwr', 'Volume']] = analysis_data[['pnl', 
+                    analysis_data11[['pnl', 'returns', 'mwr', 'Volume']] = analysis_data11[['pnl', 
                                                                                        'returns', 
                                                                                        'mwr',
                                                                                        'Volume']].fillna(0)
                 except IndexError:
-                    st.write('start date should be less than or equal to end date') 
+                    st.write('start date should be less than or equal to end date')
+                analysis_data = analysis_data11.loc[start_date:end_date]     
                 self.placeholders()   
-                allocation = self.placeholder4.number_input('Initial Allocation', 
+                allocation = self.placeholder4.number_input(':white[Initial Allocation]', 
                                                 min_value=float(1.00),
                                                 value=float(100000.00), 
                                                 step=100000.00, max_value=100000000000000000.00,
@@ -458,9 +636,131 @@ class app:
                                                 Assumes that index share was bought in the end
                                                 of day1. Hence, Initial Allocation is close 
                                                 price at day 1. You can modify it to any value
-                                                you want to view''')                                                
+                                                you want to view''')   
+                # Add css to make text bigger
+                st.markdown(
+                    """
+                    <style>
+                        textarea {
+                            font-size: 2rem !important;
+                        }
+                        input {
+                            font-size: 1.5rem !important;
+                        }                      
+                    </style>
+                    """,
+                    unsafe_allow_html=True,
+                )        
+                                                       
                 self.app_stats_mwr(analysis_data, allocation) 
-            default()   
+            
+            def view_21_twr():
+                if st.session_state['button_twr'] == True:
+                    st.session_state['button_twr'] = False
+                analysis_data1 = self.data
+                start_date = analysis_data1.index.min()
+                end_date = analysis_data1.index.max()
+                analysis_data11 = date_range(start_date, end_date, analysis_data1)
+                analysis_data11[['Open', 'High', 'Low', 'Close']] = analysis_data11[['Open',
+                                                                                    'High', 'Low',
+                                                                                    'Close']].fillna(
+                method=('ffill'))
+                analysis_data11[['pnl', 'returns', 'mwr', 'Volume']] = analysis_data11[['pnl', 
+                                                                                    'returns', 
+                                                                                    'mwr',
+                                                                                    'Volume']].fillna(0) 
+                analysis_data = analysis_data11.iloc[-21:]               
+                self.placeholders()
+                allocation = self.placeholder4.number_input('Initial Allocation', 
+                                                min_value=analysis_data['Close'].iloc[0],
+                                                value=analysis_data['Close'].iloc[0],
+                                                step=100000.00)                 
+                self.app_stats_mwr(analysis_data, allocation)       
+                # Add css to make text bigger
+                st.markdown(
+                    """
+                    <style>
+                    textarea {
+                        font-size: 2rem !important;
+                    }
+                    input {
+                        font-size: 1.5rem !important;
+                    }                      
+                    </style>
+                    """,
+                    unsafe_allow_html=True,
+                )        
+                                                   
+            
+            def view_60_twr():
+                analysis_data1 = self.data
+                start_date = analysis_data1.index.min()
+                end_date = analysis_data1.index.max()
+                analysis_data11 = date_range(start_date, end_date, analysis_data1)
+                analysis_data11[['Open', 'High', 'Low', 'Close']] = analysis_data11[['Open',
+                                                                                    'High', 'Low',
+                                                                                    'Close']].fillna(
+                method=('ffill'))
+                analysis_data11[['pnl', 'returns', 'mwr', 'Volume']] = analysis_data11[['pnl', 
+                                                                                    'returns', 
+                                                                                    'mwr',
+                                                                                    'Volume']].fillna(0) 
+                analysis_data = analysis_data11.iloc[-60:]                               
+                self.placeholders() 
+                allocation = self.placeholder4.number_input('Initial Allocation', 
+                                        min_value=float(analysis_data['Close'].iloc[0]),
+                                        value= float(analysis_data['Close'].iloc[0]),
+                                        max_value=100000000.0000, step=100000.00)
+                # Add css to make text bigger
+                st.markdown(
+                    """
+                    <style>
+                    textarea {
+                        font-size: 2rem !important;
+                    }
+                    input {
+                        font-size: 1.5rem !important;
+                    }                      
+                    </style>
+                    """,
+                    unsafe_allow_html=True,
+                )        
+                                        
+                self.app_stats_mwr(analysis_data, allocation)  
+            
+            button1_twr = self.placeholder3.button('Last 60 Days')
+            button2_twr = self.placeholder2.button('Last 21 Days')
+            button3_twr = self.placeholder30.button('Exit View')
+
+            if st.session_state.get('button_twr')!=True:
+                st.session_state['button_twr'] = button1_twr # Saved the state
+            if st.session_state.get('new_button_twr')!=True:
+                st.session_state['new_button_twr'] = button2_twr # Saved the state   
+            if st.session_state.get('new_button1_twr')!=True:
+                st.session_state['new_button1_twr'] = button3_twr 
+            
+         #   if ((st.session_state['button'] == True) and (st.session_state['new_button'] ==  True)):
+         #       st.rerun()              
+                           
+            if st.session_state['new_button1_twr'] == True:
+                st.session_state['button_twr'] = False
+                st.session_state['new_button_twr'] = False
+                st.session_state['new_button1_twr'] = False  
+                
+            if (st.session_state['button_twr'] == True) and (st.session_state['new_button_twr'] == True):
+                st.warning('''Click On 'Exit View' before switching between views''')
+            
+            elif st.session_state['button_twr'] == True:
+                st.session_state['new_button_twr'] = False
+                view_60_twr()
+                        
+            elif st.session_state['new_button_twr'] == True:
+                st.session_state['button_twr'] = False
+                view_21_twr()
+                
+                
+            elif (st.session_state['button_twr']!=True) and (st.session_state['new_button_twr']!=True):
+                default_twr()                          
             
     def app_interact(self):                 
         self.get_data()

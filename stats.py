@@ -45,14 +45,63 @@ def avg_monthly_twr(data: pd.DataFrame, col: str) -> float:
     gp_m = gp_m1[0]
     return gp_m
 
-def last_n_twr(data: pd.DataFrame, col: str, n: int) -> float:
-    slice_ = data.iloc[-n:]
-    slice_ret = pd.DataFrame(slice_[col])
-    slice_ret['ret1'] = 1+slice_ret[col]
-    gp = slice_ret.agg({'ret1':'prod'})
-    gp1 = gp-1
-    gp_m = gp1[0]
+def last_n_twr(data: pd.DataFrame, col: str, n: int, filter: bool) -> float:
+    if filter == False:
+        slice_ = data.iloc[-n:]
+        print(slice_)
+        slice_ret = pd.DataFrame(slice_[col])
+        slice_ret['ret1'] = 1+slice_ret[col]
+        gp = slice_ret.agg({'ret1':'prod'})
+        gp1 = gp-1
+        gp_m = gp1[0]
+    elif filter == True:
+        data1 = data.dropna(subset=[col])
+        slice_ = data1.iloc[-n:]
+        print(slice_)
+        slice_ret = pd.DataFrame(slice_[col])
+        slice_ret['ret1'] = 1+slice_ret[col]
+        gp = slice_ret.agg({'ret1':'prod'})
+        gp1 = gp-1
+        gp_m = gp1[0]
     return gp_m
+
+def last_n_mwr(wt_cash: pd.Series, change: pd.Series, start_capital_eod: float) -> float:
+    start_cap = start_capital_eod.iloc[0]
+    mwr = change.sum() /(start_cap + wt_cash.sum())
+    print('MWR', change.sum(), start_cap, wt_cash.sum(), mwr)
+    return mwr
+
+def last_n_weighted_cash_flow(data: pd.Series, data1: pd.Series, capital: pd.Series) -> pd.Series:
+    '''
+    data: change dataframe
+    data1: cash flow_eod dataframe
+    capital: eod capital data
+    calculate start cap eod, capital - cash flow for the day when cash flow happened
+    '''
+    if data1.iloc[0] != 0:
+        print('cash flow:', data1.iloc[0])
+        data1.iloc[0] = 0
+        print('cash flow', data1.iloc[0])
+    new_data = data.dropna()
+    len_data = len(new_data)
+    ind_lst = new_data.index.tolist()
+    new_data1 = data1[data1.index.isin(ind_lst)]
+    capital = capital[capital.index.isin(ind_lst)]
+    print(new_data1)    
+    print(new_data)
+    print(capital)
+    for x in range(len(new_data)):
+        new_data.iloc[x] = len_data-1-x
+        if new_data1.iloc[x] != 0:
+            capital.iloc[x] = capital.iloc[x] - new_data1.iloc[x] 
+    print('after for loop new data change', new_data)
+    print('capital mwr', capital)
+    new_data = new_data / len(new_data)
+    frame = pd.DataFrame(new_data1)
+    frame['wt'] = new_data.copy()
+    wt_cash = frame.product(axis=1)
+    print(wt_cash)
+    return wt_cash, capital
     
 def cagr(starting_value: float, ending_value: float, duration: int) -> float:
     n = 252/duration

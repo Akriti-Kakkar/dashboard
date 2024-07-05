@@ -8,7 +8,12 @@ def authenticated_menu():
     image = Image.open("htts_fund_logo.png")
     st.sidebar.image(image, caption="HTTS Fund", output_format="PNG")
     st.header('Performance Analysis Dashboard')
-    st.sidebar.success('Select Any Page From Here')
+    st.sidebar.markdown('''
+                        <span style="color:white;font-weight:700;font-size:25px;background-color:black">
+                            Select Any Page From Here:
+                        </span>
+                        ''', 
+                        unsafe_allow_html=True)
     st.sidebar.page_link("pages/baskets_analysis.py", label="Compare your baskets with s&p")
     st.sidebar.page_link("pages/_index_analysis.py", label="S&P Analysis")
     conn = sqlite3.connect(st.secrets["database"]["database_name"])

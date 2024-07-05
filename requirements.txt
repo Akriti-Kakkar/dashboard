@@ -64,3 +64,4 @@ wheel==0.43.0
 yfinance==0.2.40
 gcsfs
 st-files-connection
+st-gsheets-connection
