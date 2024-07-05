@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 from stats import *
 import streamlit as st
 from streamlit_gsheets import GSheetsConnection
+import locale
 
 # Create a connection object.
 conn = st.connection("gsheets", type=GSheetsConnection)
@@ -16,7 +17,8 @@ df = conn.read()
 #    st.write(f"{row.WeekNum}:")
 
 df = conn.read(
-    worksheet="capital"
+    worksheet="capital",
+    ttl="1m"
 )
 st.write(df.tail(30))
 
@@ -275,6 +277,12 @@ class basket_analysis:
                                                 self.start, self.end_date,
                                                 self.twr, self.mwr)):
                 print('init for loop for active baskets')
+                locale.setlocale(locale.LC_ALL, 'English_United States.1252')
+                locale.override_localeconv = {'n_sign_posn':1}
+                a = locale.currency(a, symbol=True, grouping=True)
+                y = locale.currency(y, symbol=True, grouping=True)
+                l = locale.currency(l, symbol=True, grouping=True)
+                z = locale.currency(z, symbol=True, grouping=True)
                 locals()[f'{x}_button'] = st.sidebar.button(f'''{x} 
                                                             
                                                            \n    Inception Date: {b}    End Date: {c}
@@ -301,5 +309,5 @@ class basket_analysis:
             
 spreadsheet_name = ['capital', 'change', 'mtm', 'mtm_forex', 'cash_flows']
 database_name = 'dashboard_2024.xlsx'
-obj = basket_analysis(spreadsheet_name, database_name)
-obj.main()
+#obj = basket_analysis(spreadsheet_name, database_name)
+#obj.main()
