@@ -12,3 +12,8 @@ backgroundColor="#c6cccc"
 secondaryBackgroundColor="#1d4e89"
 textColor="#000000"
 font="sans serif"
+
+# Rolling sharpe:
+-> check possibility of cagr and annualized return
+-> drawdown, check possibility of including period return
+-> used cagr for beta calculation

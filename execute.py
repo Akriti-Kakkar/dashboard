@@ -2,6 +2,7 @@ from database import database
 import streamlit as st
 import toml
 import os
+from streamlit_gsheets import GSheetsConnection
 
 def main() -> object:
 
@@ -36,4 +37,21 @@ def main() -> object:
  #   return conn, success, data, table, rec, close
     
     return conn, data, data1
-execute = main()
+#execute = main()
+
+def google_sheets():
+   # Create a connection object.
+   conn1 = st.connection("gsheets", type=GSheetsConnection)
+   df = conn1.read()
+   obj = database(database_name=st.secrets["database"]['database_name'], 
+               table_name=st.secrets["database"]["table_name"],
+               ticker='^GSPC')
+   conn = obj.create_connection()
+   success = obj.__str__()
+   print(conn, success)
+   date = obj.get_last_working_day()
+   data =  obj.fetch_data()
+   #   table = obj.create_historical_prices_table()
+   rec = obj.insert_records()
+   data1 = obj.read_all()
+   close = obj.close_connection()

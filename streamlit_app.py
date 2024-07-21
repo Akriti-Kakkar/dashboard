@@ -10,7 +10,7 @@ def authenticated_menu():
     st.header('Performance Analysis Dashboard')
     st.sidebar.markdown('''
                         <span style="color:white;font-weight:700;font-size:25px;background-color:black">
-                            Select Any Page From Here:
+                            Navigation Pane:
                         </span>
                         ''', 
                         unsafe_allow_html=True)

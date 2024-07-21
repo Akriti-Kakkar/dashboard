@@ -49,10 +49,12 @@ class app:
         success = obj.__str__()
         print(conn, success)
         data1 = obj.read_all()
-        data = pd.DataFrame(data1)
-        data.columns = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume']
-        data = data.set_index('Date', drop=True)
-        data.index = pd.to_datetime(data.index)
+        data11 = pd.DataFrame(data1)
+        data11.columns = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume']
+        data11 = data11.set_index('Date', drop=True)
+        data11.index = pd.to_datetime(data11.index)
+        data = date_range(data11.index.min(), data11.index.max(), data11)
+        data[data.columns] = data[data.columns].fillna(method = ('ffill'))
         self.data = data
         
     def calculate_returns(self):
@@ -246,10 +248,10 @@ class app:
             max_cons_pos = getMaxLength(analysis_data['returns'], 1)
             max_cons_neg = getMaxLength(analysis_data['returns'], 0)
             m_ret = avg_monthly_twr(analysis_data, 'returns')
-            one_ret = last_n_twr(analysis_data, 'returns', 252)
-            od_ret = last_n_twr(analysis_data, 'returns', 1)
-            t1d_ret = last_n_twr(analysis_data, 'returns', 21)
-            s0d_ret = last_n_twr(analysis_data, 'returns', 60)
+            one_ret = last_n_twr(analysis_data, 'returns', 252, False)
+            od_ret = last_n_twr(analysis_data, 'returns', 1, False)
+            t1d_ret = last_n_twr(analysis_data, 'returns', 21, False)
+            s0d_ret = last_n_twr(analysis_data, 'returns', 60, False)
             
             stats_data = pd.DataFrame({
                 'Stats' : ['Duration',
@@ -776,9 +778,9 @@ class app:
     
     def main(self):
         return self.page_config(),  self.app_interact()
-    
 
-def run():
-    initial=app(ticker='^GSPC')
-    return initial.main()
-run()
+if __name__ == '__main__':
+    def run():
+        initial=app(ticker='^GSPC')
+        return initial.main()
+    run()

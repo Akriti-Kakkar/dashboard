@@ -3,6 +3,42 @@ import pandas as pd
 from datetime import timedelta, date
 import numpy as np
 
+def color_code(col1, col2):
+    if col1 > col2:
+        return "green"
+    else:
+        return "red"
+    
+def color_kwargs(col1):
+    if col1.startswith("-"):
+        return "color: red"
+    else:
+        return "color: green"
+
+def comparison(basket_stat, index_stat):
+    if basket_stat>index_stat:
+        pf = "Outperformed"
+    elif basket_stat<index_stat:
+        pf = "Underperformed"
+    else:
+        pf = "Equalled"
+    return pf
+
+def comparison_alt(basket_stat, index_stat):
+    if basket_stat<index_stat:
+        pf = "Outperformed"
+    elif basket_stat>index_stat:
+        pf = "Underperformed"
+    else:
+        pf = "Equalled"
+    return pf
+
+def comparison_emoji(sentiment):
+    if sentiment in ("Equalled", "Outperformed"):
+        emoji = "👍"
+    elif sentiment in ("Underperformed"):
+        emoji = "👎"
+    return emoji
 
 def date_range(starting_date: object, ending_date: object, data: pd.DataFrame) -> pd.DataFrame:
     range1 = pd.bdate_range(starting_date, ending_date)
@@ -18,11 +54,13 @@ def duration(starting_date: object, ending_date: object) -> int:
     return weekdays
 
 def win_days(frame: pd.DataFrame, value: str) -> int:
+    frame = frame.dropna(subset=[value])
     win_frame = frame[value].apply(lambda x: 1 if x >= 0 else 0)
     win = win_frame.sum()
     return win
         
 def loss_days(frame: pd.DataFrame, value: str) -> int:
+    frame = frame.dropna(subset=[value])
     loss_frame = frame[value].apply(lambda x: 1 if x < 0 else 0)
     loss = loss_frame.sum()
     return loss   
@@ -65,13 +103,21 @@ def last_n_twr(data: pd.DataFrame, col: str, n: int, filter: bool) -> float:
         gp_m = gp1[0]
     return gp_m
 
-def last_n_mwr(wt_cash: pd.Series, change: pd.Series, start_capital_eod: float) -> float:
+def last_n_mwr(wt_cash: pd.Series, change: pd.Series, start_capital_eod: float,
+               n=0) -> float:
+    if n==0:
+        change = change.dropna()
+    else:
+        change = change.dropna()
+        change = change.iloc[-n:]
+    print('n days change', change)
     start_cap = start_capital_eod.iloc[0]
     mwr = change.sum() /(start_cap + wt_cash.sum())
     print('MWR', change.sum(), start_cap, wt_cash.sum(), mwr)
     return mwr
 
-def last_n_weighted_cash_flow(data: pd.Series, data1: pd.Series, capital: pd.Series) -> pd.Series:
+def last_n_weighted_cash_flow(data: pd.Series, data1: pd.Series, capital: pd.Series,
+                              n=0) -> pd.Series:
     '''
     data: change dataframe
     data1: cash flow_eod dataframe
@@ -83,19 +129,26 @@ def last_n_weighted_cash_flow(data: pd.Series, data1: pd.Series, capital: pd.Ser
         data1.iloc[0] = 0
         print('cash flow', data1.iloc[0])
     new_data = data.dropna()
-    len_data = len(new_data)
     ind_lst = new_data.index.tolist()
     new_data1 = data1[data1.index.isin(ind_lst)]
     capital = capital[capital.index.isin(ind_lst)]
+    if n == 0:
+        pass
+    else:     
+        new_data = new_data.iloc[-n:]
+        new_data1 = new_data1.iloc[-n:]
+        capital = capital.iloc[-n:]
     print(new_data1)    
     print(new_data)
     print(capital)
+    len_data = len(new_data)
     for x in range(len(new_data)):
         new_data.iloc[x] = len_data-1-x
         if new_data1.iloc[x] != 0:
             capital.iloc[x] = capital.iloc[x] - new_data1.iloc[x] 
     print('after for loop new data change', new_data)
     print('capital mwr', capital)
+    print('len of wt timeseries', len(new_data))
     new_data = new_data / len(new_data)
     frame = pd.DataFrame(new_data1)
     frame['wt'] = new_data.copy()
@@ -138,7 +191,18 @@ def sortino_ratio(ann_ret: float, ann_std: float) -> float:
     return sort1
 
 def beta(stock_ret: float, ind_ret: float) -> float:
-    bet_a = np.cov(stock_ret, ind_ret)
+    ind_ret.name = 'S&P'
+    stock_ret.name = 'basket'
+    data = pd.merge(stock_ret, ind_ret, 
+                    left_index=True, right_index=True,
+                    how='left')
+    print(data)
+    matrix = data.cov()
+    cov = matrix.loc['basket', 'S&P']
+    print(cov)
+    #var = np.sqrt(data['S&P'].std())**2
+    var = matrix.loc['S&P', 'S&P']
+    bet_a = cov/var
     return bet_a
 
 def treynor_ratio(cagr: float, beta: float) -> float:
