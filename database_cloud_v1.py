@@ -47,7 +47,9 @@ class database:
                  'https://www.googleapis.com/auth/drive'] 
         creds = ServiceAccountCredentials.from_json_keyfile_dict(cred_dict)
         client = gspread.authorize(creds) 
+        print("authorization completed successfully")
         sh = client.open(os.environ["filename"]).worksheet(os.environ["sheetname"])
+        print("client read the file and the sheet")
         self.sh = sh
         
     def __str__(self) -> str:
