@@ -43,9 +43,10 @@ class database:
     def create_connection(self) -> Tuple[object, object]:
        # conn = st.connection("gsheets", type=GSheetsConnection)
         cred_dict = json.loads(os.environ["dict1"])
+        print("cred_dict_created", cred_dict)
         scope = ['https://spreadsheets.google.com/feeds', 
                  'https://www.googleapis.com/auth/drive'] 
-        creds = ServiceAccountCredentials.from_json_keyfile_dict(cred_dict)
+        creds = ServiceAccountCredentials.from_json_keyfile_dict(cred_dict, scopes=scope)
         client = gspread.authorize(creds) 
         print("authorization completed successfully")
         sh = client.open(os.environ["filename"]).worksheet(os.environ["sheetname"])
