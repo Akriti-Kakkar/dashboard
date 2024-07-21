@@ -1,14 +1,14 @@
 on:
   schedule:
-    - cron: '30 16 * * 1-5' # At 2:00 PM IST (08:00 UTC) on weekdays
-    #- cron: '30 16 * * 1-7' # At 2:00 PM IST (08:00 UTC) on weekdays
+    - cron: '30 16 * * *' # At 2:00 PM IST (08:00 UTC) on weekdays
 
 jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      DATABASE_NAME: ${{ vars.DATABASE_NAME }}
-      TABLE_NAME: ${{ vars.TABLE_NAME }}
+      filename: ${{ vars.FILENAME }}
+      sheetname: ${{ vars.SHEETNAME }}
+      dict1: ${{ secrets.DICT1 }}
     steps:
       - name: Checkout repo content
         uses: actions/checkout@v2
@@ -22,10 +22,13 @@ jobs:
           pip install -r requirements.txt
       - name: Show environment
         run: |
-          env | grep DATABASE_NAME
+          env | grep filename
       - name: Show environment 1
         run: |
-          env | grep TABLE_NAME
+          env | grep sheetname
+      - name: Show environment 2
+        run: |
+            env | grep dict1          
       - name: Create python script
         run: |
           cat > showenv.py <<'EOF'
@@ -37,7 +40,8 @@ jobs:
 
       - name: Run python script
         run: |
-          python execute.py
+          python database_cloud_v1.py
         env:
-          DATABASE_NAME: ${{ vars.DATABASE_NAME }}
-          TABLE_NAME: ${{ vars.TABLE_NAME }}
+          filename: ${{ vars.FILENAME }}
+          sheetname: ${{ vars.SHEETNAME }}
+          dict1: ${{ secrets.dict1 }}
