@@ -33,7 +33,8 @@ class database:
     def fetch_data(self) -> pd.DataFrame:
         nifty = yf.Ticker(self.ticker)
         print(self.last_working_day, self.end_date)
-        data = nifty.history(interval='1d', start=str(self.last_working_day), end=str(self.end_date))
+        data = nifty.history(interval='1d', start=datetime.date(2022,12,29), end=str(self.end_date))
+        #data = nifty.history(interval='1d', start=str(self.last_working_day), end=str(self.end_date))
         data["Date"] = data.index
         data = data.reset_index(drop=True)
         data.to_csv('prices.csv')
@@ -49,7 +50,7 @@ class database:
         creds = ServiceAccountCredentials.from_json_keyfile_dict(cred_dict, scopes=scope)
         client = gspread.authorize(creds) 
         print("authorization completed successfully")
-        sh = client.open(os.environ["filename"]).worksheet(os.environ["sheetname"])
+        sh = client.open(os.environ["filename"]).worksheet(os.environ["sheetname"][5])
         print("client read the file and the sheet")
         self.sh = sh
         
