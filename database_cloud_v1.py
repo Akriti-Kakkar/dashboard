@@ -50,7 +50,7 @@ class database:
         creds = ServiceAccountCredentials.from_json_keyfile_dict(cred_dict, scopes=scope)
         client = gspread.authorize(creds) 
         print("authorization completed successfully")
-        print(os.environ["sheetname"], type(os.environ["sheetname"])
+        print(os.environ["sheetname"], type(os.environ["sheetname"]))
         sh = client.open(os.environ["filename"]).worksheet(os.environ["sheetname"][5])
         print("client read the file and the sheet")
         self.sh = sh
