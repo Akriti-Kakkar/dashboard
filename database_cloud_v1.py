@@ -10,6 +10,7 @@ from streamlit_gsheets import GSheetsConnection
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import json
+import ast
 
 class database:
     def __init__(self, ticker: str) -> None:
@@ -50,8 +51,9 @@ class database:
         creds = ServiceAccountCredentials.from_json_keyfile_dict(cred_dict, scopes=scope)
         client = gspread.authorize(creds) 
         print("authorization completed successfully")
-        print(os.environ["sheetname"], type(os.environ["sheetname"]))
-        sh = client.open(os.environ["filename"]).worksheet(os.environ["sheetname"][5])
+        lst_sheets = ast.literal_eval(os.environ["sheetname"])
+        print(os.environ["sheetname"], type(os.environ["sheetname"]), type(lst_sheets))
+        sh = client.open(os.environ["filename"]).worksheet(lst_sheets[5])
         print("client read the file and the sheet")
         self.sh = sh
         
