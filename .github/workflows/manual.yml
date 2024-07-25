@@ -39,10 +39,12 @@ jobs:
           print(f'Email password is {os.environ.get("TABLE_NAME", "<unknown")}')
           EOF
 
-      - name: Run python script
-        run: |
-          python database_cloud_v1.py
-        env:
-          filename: ${{ vars.FILENAME }}
-          sheetname: ${{ vars.SHEETNAME }}
+       
+      #- name: Run python script
+      #  run: |
+      #    python database_cloud_v1.py
+      #  env:
+      #    filename: ${{ vars.FILENAME }}
+      #    sheetname: ${{ vars.SHEETNAME }}
+      #
           dict1: ${{ secrets.dict1 }}
