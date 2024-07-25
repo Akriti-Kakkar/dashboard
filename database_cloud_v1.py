@@ -32,7 +32,7 @@ class database:
     def fetch_data(self) -> pd.DataFrame:
         nifty = yf.Ticker(self.ticker)
         print(self.last_working_day, self.end_date)
-        data = nifty.history(interval='1d', start=datetime.date(2022,12,30), end=datetime.date(2024,7.23))
+        data = nifty.history(interval='1d', start=datetime.date(2022,12,30), end=datetime.date(2024,7,24))
         #data = nifty.history(interval='1d', start=str(self.last_working_day), end=str(self.end_date))
         data["Date"] = data.index.date
         data = data.reset_index(drop=True)
