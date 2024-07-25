@@ -1,7 +1,6 @@
 from typing import *
 import yfinance as yf
 import pandas as pd
-import streamlit as st
 import datetime
 from datetime import timedelta
 import os
@@ -33,10 +32,10 @@ class database:
     def fetch_data(self) -> pd.DataFrame:
         nifty = yf.Ticker(self.ticker)
         print(self.last_working_day, self.end_date)
-        data = nifty.history(interval='1d', start=str(self.last_working_day), end=str(self.end_date))
-        data["Date"] = data.index
+        data = nifty.history(interval='1d', start=datetime.date(2022,12,30), end=datetime.date(2024,7.23))
+        #data = nifty.history(interval='1d', start=str(self.last_working_day), end=str(self.end_date))
+        data["Date"] = data.index.date
         data = data.reset_index(drop=True)
-        data.to_csv('prices.csv')
         self.data = data
         return data
              
@@ -57,9 +56,10 @@ class database:
     
 
     def write_data(self):
-        self.data = self.data.drop("Date", axis=1)
+        self.data = self.data["Date"].astype(str)
         values = self.data.values.tolist()
-        self.sh.append_rows(values)  
+        self.sh.append_row(self.data.columns.tolist(), value_input_option="USER_ENTERED")
+        self.sh.append_rows(values, value_input_option="USER_ENTERED")  
     
 obj = database(ticker='^GSPC')
 date = obj.get_last_working_day()
