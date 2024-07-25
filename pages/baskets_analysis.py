@@ -543,18 +543,26 @@ class basket_analysis:
         met_pl = st.empty()
         met_pl1 = st.empty()
         st.info(f"{lst_yr} PnL", icon="💲")
+        if sum_year > 0:
+            inc11 = sum_year
+        else:
+            inc11 = 0
         inc1 = locale.currency(sum_year, symbol=True, grouping=True)
         st.metric(label=f"{lst_yr} PnL",
                        value=inc1,
-                       delta=inc1)    
+                       delta=inc11)    
         frame1 = frame.drop("Year", axis=1)    
         sum_frame = frame1.sum(axis=0).sort_values(ascending=False)
         sum_frame_data = pd.DataFrame(sum_frame, columns=["PnL"])
         inc = locale.currency(sum_frame.sum(), symbol=True, grouping=True)
         met_pl.info("Total PnL", icon="💲")
+        if sum_frame.sum() > 0:
+            inc_del = sum_frame.sum()
+        else:
+            inc_del = 0
         met_pl1.metric(label="Total PnL",
                        value=inc,
-                       delta=inc)
+                       delta=inc_del)
         sum_frame_data['Baskets'] = sum_frame_data.index
         sum_frame_data = sum_frame_data.reset_index(drop=True)
         sum_frame_data.index = sum_frame_data.index+1
