@@ -9,14 +9,16 @@ import pandas as pd
 import altair as alt
 from datetime import timedelta
 import numpy as np
-import datetime
+import datetime as dt
 from stats import *
 import plotly.express as px
+from streamlit_gsheets import GSheetsConnection
+import ast
 
 
 class app:
-    def __init__(self, ticker='^GSPC'):
-        self.ticker = ticker
+    def __init__(self, sheet):
+        self.sheet = sheet
         
     @staticmethod
     def page_config():
@@ -42,16 +44,13 @@ class app:
         return get_news
     
     def get_data(self):
-        obj = database(database_name=st.secrets["database"]['database_name'], 
-                   table_name=st.secrets["database"]["table_name"],
-                   ticker='^GSPC')
-        conn = obj.create_connection()
-        success = obj.__str__()
-        print(conn, success)
-        data1 = obj.read_all()
-        data11 = pd.DataFrame(data1)
-        data11.columns = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume']
+        obj = st.connection("gsheets", type=GSheetsConnection)
+        index_data = obj.read(worksheet=self.sheet)
+        columns_ = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume']
+        data11 = index_data[columns_]
         data11 = data11.set_index('Date', drop=True)
+        data11.index = pd.to_datetime(data11.index)
+        data11.index = data11.index.to_series().dt.date
         data11.index = pd.to_datetime(data11.index)
         data = date_range(data11.index.min(), data11.index.max(), data11)
         data[data.columns] = data[data.columns].fillna(method = ('ffill'))
@@ -62,6 +61,7 @@ class app:
         self.data['pnl'] = self.data['Close'] - self.data['Close'].shift(1)
         self.data['mwr'] = self.data['pnl'] / self.data['Close'].shift(1)
         self.data = self.data.fillna(0)
+        self.data = self.data.drop(self.data.index.min(), axis=0)
     
     def duration_widgets(self):
         col3, col4, col5, col6, col30 = st.columns(5)
@@ -290,7 +290,8 @@ class app:
             dd = dd[dd['Drawdown']!=0]
             fig = px.histogram(dd, y = 'Drawdown', x = dd.index,
                             template='ggplot2', histfunc='avg')
-            fig.update_layout(plot_bgcolor="#FFFFFF", 
+            fig.update_layout(title="Average Of Daily Drawdown",
+                                plot_bgcolor="#FFFFFF", 
                                 xaxis_title="Drawdown (%)",
                                 yaxis_title="Date")  
             fig.update_xaxes(linecolor='red', showgrid=False, rangeslider_visible=True,
@@ -320,9 +321,10 @@ class app:
             analysis_data['roll_sharpe'] = analysis_data['roll_mean']/analysis_data['std']
             fig = px.histogram(analysis_data, y = 'roll_sharpe', x = analysis_data.index,
                             template='ggplot2', histfunc='avg')
-            fig.update_layout(plot_bgcolor="#FFFFFF", 
-                                xaxis_title="Sharpe Ratio",
-                                yaxis_title="Date")  
+            fig.update_layout(title="Average Of Daily 5-Day Rolling Sharpe",
+                            plot_bgcolor="#FFFFFF", 
+                            xaxis_title="Sharpe Ratio",
+                            yaxis_title="Date")  
             fig.update_xaxes(linecolor='green', showgrid=False, rangeslider_visible=True,
                                              rangeselector=dict(
                     buttons=list([
@@ -781,6 +783,9 @@ class app:
 
 if __name__ == '__main__':
     def run():
-        initial=app(ticker='^GSPC')
+        spreadsheet_name1 = st.secrets["database"]["spreadsheet_name"]
+        spreadsheet_name = ast.literal_eval(spreadsheet_name1)
+        sheet = spreadsheet_name[5]
+        initial=app(sheet)
         return initial.main()
     run()

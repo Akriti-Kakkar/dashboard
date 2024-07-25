@@ -83,3 +83,4 @@ wheel==0.43.0
 yfinance==0.2.40
 IPython
 oauth2client
+schedule

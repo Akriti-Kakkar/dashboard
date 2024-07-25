@@ -15,18 +15,21 @@ from termcolor import colored
 from IPython.display import display
 import html
 from streamlit_extras.metric_cards import style_metric_cards
-import ast
 
 class basket_analysis:
-    def __init__(self, spreadsheet_name: list, sheet: str) -> None:
+    def __init__(self, spreadsheet_name: list, database_name: str) -> None:
         
         '''
-        make baskets 2024 label dynamic to take maximum year
-        sort baskets lst based on change
-        self.sh = self.sh is silenced, need to verify 
+        spreadsheet sheets:
+        1. change = done
+        2. mtm (without forex) = done
+        3. mtm with forex = done
+        4. capital = done
+        5. capital_eod = done
+        6. cash flow_eod = done
         '''
         self.spreadsheet_name = spreadsheet_name
-        self.sheet = sheet
+        self.database_name = database_name
     
     @staticmethod
     def page_config() -> None:
@@ -40,40 +43,27 @@ class basket_analysis:
         """, unsafe_allow_html=True)
         
     def get_data(self):
-        conn = st.connection("gsheets", type=GSheetsConnection)
-        capital_data = conn.read(worksheet=self.spreadsheet_name[0])
-        cashflow_data = conn.read(worksheet=self.spreadsheet_name[4])
-        change_data = conn.read(worksheet=self.spreadsheet_name[1])
-        mtm_data_forex = conn.read(worksheet=self.spreadsheet_name[2])
-        mtm_data = conn.read(worksheet=self.spreadsheet_name[3])           
+        capital_data = pd.read_excel(self.database_name, 
+                                     sheet_name=self.spreadsheet_name[0])
         capital_data = capital_data.set_index('Date')
-        capital_data.index = pd.to_datetime(capital_data.index)
+        baskets_lst = capital_data.columns.tolist()
+        baskets_lst = baskets_lst[2:]
+        active_baskets = [col for col in capital_data.columns if 
+                          capital_data[col].isna().iloc[-1]!=True]
+        active_baskets = active_baskets[2:]
+        cashflow_data = pd.read_excel(self.database_name, 
+                                sheet_name=self.spreadsheet_name[4])
         cashflow_data = cashflow_data.set_index('Date')
-        cashflow_data.index = pd.to_datetime(cashflow_data.index)
-        change_data = change_data.set_index('Date')       
-        change_data.index = pd.to_datetime(change_data.index)
-        baskets_lst1 = capital_data.columns.tolist()
-        baskets_lst1 = baskets_lst1[2:]        
-        frame1 = change_data[baskets_lst1]
-        sum_year = frame1.sum()
-        sum_year.name = "PnL"
-        sum_year = sum_year.sort_values()
-        sort_baskets = sum_year.index.tolist()
-        baskets_lst = sort_baskets[::-1]
-        active_baskets1 = [col for col in capital_data.columns if 
-                          capital_data[col].isna().iloc[-1]!=True]   
-        active_baskets1 = active_baskets1[2:]       
-        frame11 = change_data[active_baskets1]
-        sum_year1 = frame11.sum()
-        sum_year1.name = "PnL"
-        sum_year1 = sum_year1.sort_values()
-        sort_baskets1 = sum_year1.index.tolist()
-        active_baskets = sort_baskets1[::-1]
+        change_data = pd.read_excel(self.database_name, 
+                                    sheet_name=self.spreadsheet_name[1])
+        change_data = change_data.set_index('Date')
+        mtm_data_forex = pd.read_excel(self.database_name, 
+                                 sheet_name=self.spreadsheet_name[2])
         mtm_data_forex = mtm_data_forex.set_index('Date')
-        mtm_data_forex.index = pd.to_datetime(mtm_data_forex.index)
         mtm_data_forex = mtm_data_forex[baskets_lst]
+        mtm_data = pd.read_excel(self.database_name,
+                                       sheet_name=self.spreadsheet_name[3])
         mtm_data = mtm_data.set_index('Date')
-        mtm_data.index = pd.to_datetime(mtm_data.index)
         mtm_data = mtm_data[baskets_lst]
         
         self.mtm_data = mtm_data
@@ -82,11 +72,10 @@ class basket_analysis:
         self.cashflow_data = cashflow_data
         self.capital_data = capital_data
         self.baskets_lst = baskets_lst
-        self.active_baskets = active_baskets  
-        self.conn = conn  
+        self.active_baskets = active_baskets    
         
     def connect_index(self):
-        obj = app(self.sheet)
+        obj = app('^GSPC')
         obj.get_data()
         obj.calculate_returns()
         index_data = obj.data
@@ -494,22 +483,25 @@ class basket_analysis:
                     dict(step="all")
                 ])
             ))
-        fig.update_yaxes( linecolor='blue', showgrid=False)  
-        fig_place = st.empty()                                
-        fig_place.plotly_chart(fig)     
+        fig.update_yaxes( linecolor='blue', showgrid=False)                                  
+        st.plotly_chart(fig)     
                                             
     def fund_mwr_page(self, change_data, mn_wt, baskets_lst_):
+        '''
+        ch and basket_lst
+        include 21 days and 60 days buttons in baskets view
+        '''
         st.subheader('📈 Baskets Vs S&P Analysis')
         frame = change_data.fillna(0)
-        drop_baskets = [x for x in baskets_lst_ if (x.endswith("_unmerged"))|(x.endswith("_removed"))|(x=="Year")]
-        keep_baskets = [x for x in baskets_lst_ if x not in drop_baskets]
+        #drop_baskets = [x for x in frame.columns if (x.endswith("_unmerged"))|(x.endswith("_removed"))|(x=="Year")]
+        #keep_baskets = [x for x in frame.columns if x not in drop_baskets]
         #frame = frame.drop([x for x in frame.columns if (x.endswith("_unmerged"))|(x.endswith("_removed"))|(x=="Year")],
         #                   axis=1)
-        frame = change_data[keep_baskets]
+        frame = change_data[baskets_lst_]
         st.markdown("<font color='green'><b><span style='font-size: 24px;'>🔝 Top 2 Baskets</span></b></font>", unsafe_allow_html=True)
         fig_fund = px.density_heatmap(frame, x = frame.index, y = frame.columns.tolist()[:2],
                                       facet_col="variable")
-        fig_fund.update_layout(title="PnL Density Heatmap Of Top 2 Baskets",
+        fig_fund.update_layout(title="PnL Density Heatmap Of Top 2 Active Baskets",
                                xaxis_title="Date",
                                yaxis_title="PnL")
         fig_fund.update_xaxes(showgrid=False, rangeslider_visible=True,
@@ -538,7 +530,6 @@ class basket_analysis:
         frame["Year"] = frame.index.year
         lst_yr = frame["Year"].max()
         sum_year_frame = frame[frame["Year"]==lst_yr]
-        sum_year_frame = sum_year_frame.drop("Year", axis=1)
         sum_year = sum_year_frame.sum(axis=0).sum()
         met_pl = st.empty()
         met_pl1 = st.empty()
@@ -562,13 +553,13 @@ class basket_analysis:
         sum_frame_data = sum_frame_data[["Baskets", "PnL"]]
         sum_frame_data['PnL'] = sum_frame_data['PnL'].apply(
             lambda x: locale.currency(x, symbol=True, grouping=True)) 
+        length = (len(sum_frame_data)+len(sum_frame_data))
         sum_frame_data = sum_frame_data.style.applymap(color_kwargs, subset=["PnL"]
                                              ).set_properties(**{'text-align': 'right'}
                                                               ).set_table_styles(
                 green, axis=1).set_caption("Baskets Rankings Based On PnL")
         mwr_frame = pd.DataFrame({'Baskets': baskets_lst_, 'MWR (%)': mn_wt})
-        mwr_frame = mwr_frame[~mwr_frame["Baskets"].str.endswith("_unmerged")]
-        mwr_frame = mwr_frame[~mwr_frame["Baskets"].str.endswith("_removed")]
+      #  mwr_frame = mwr_frame[~mwr_frame["Baskets"].str.endswith("_unmerged")]
         mwr_frame = mwr_frame.sort_values(by='MWR (%)', ascending=False)
         mwr_frame = mwr_frame.reset_index(drop=True)
         mwr_frame['MWR (%)'] = mwr_frame['MWR (%)'].astype(float)
@@ -824,8 +815,7 @@ class basket_analysis:
 
         fig.update_layout(plot_bgcolor="#FFFFFF", 
                             xaxis_title="Drawdown (%)",
-                            yaxis_title="Date",
-                            title="Average Of Daily Drawdown Vs Average Of Daily S&P Returns")  
+                            yaxis_title="Date")  
         fig.update_xaxes(linecolor='red', showgrid=False, rangeslider_visible=True,
                                             rangeselector=dict(
                 buttons=list([
@@ -858,8 +848,7 @@ class basket_analysis:
                         template='ggplot2', histfunc='avg')
         fig.update_layout(plot_bgcolor="#FFFFFF", 
                             xaxis_title="Sharpe Ratio",
-                            yaxis_title="Date",
-                            title="Average Of Daily 5-Day Rolling Sharpe Ratio")  
+                            yaxis_title="Date")  
         fig.update_xaxes(linecolor='green', showgrid=False, rangeslider_visible=True,
                                             rangeselector=dict(
                 buttons=list([
@@ -903,10 +892,8 @@ class basket_analysis:
         self.connect_index()
         self.calc_engine()
         self.placeholder_widgets()
-        ts = self.cap_data.index.max().year
-        text11 = f"Baskets {ts}"
         baskets_radio = st.sidebar.radio('Baskets Selection' ,
-                                         options=['Active Baskets', text11], horizontal=True)      
+                                         options=['Active Baskets', 'Baskets 2024'], horizontal=True)      
         button1 = st.sidebar.button('Exit View')
         if st.session_state.get('button') != True:
             st.session_state['button'] = button1
@@ -918,12 +905,12 @@ class basket_analysis:
                  head): 
             for x, y, z, l, a, b, c, d, e in list(zip(basket, cap, deposit, endcap, change, start, end_date,
                                                 twr, mwr)):   
-                if st.session_state[f"{x}"] == True:
+                if st.session_state[f'{x}'] == True:
                     lst1 = [w for w in basket]
                     lst1.remove(x)
                     print(basket)
                     print(cap)
-                    if any((st.session_state[f"{key}"] == True) for key in lst1):
+                    if any((st.session_state[f'{key}'] == True) for key in lst1):
                         st.write('''Click on 'Exit View' before switching between views.''')
                         break
                     else:
@@ -935,10 +922,7 @@ class basket_analysis:
                         with pl_col1:
                             end_ = pl1.date_input('End Date', indl.date(), min_value=ind1, max_value=indl)
                         with pl_col2:
-                            locals()[f"{x}_inbut"] = pl2.button("Last 60 Days") 
-                            locals()[f"{x}_inbut1"] = pl3.button("Last 21 Days")  
-                        with pl_col3:
-                            locals()[f"{x}_inbut2"] = st.button("Exit Button")                         
+                            pass
                             
                         # Add css to make text bigger
                         st.markdown(
@@ -962,175 +946,24 @@ class basket_analysis:
                         locals()[f"{x}_stats"] = st.radio('Choose Type Of Stats', ('MWR', 'TWR'), key=f'{x,y}',
                                                           horizontal=True)
                         locals()[f"{x}_stats1"] = st.radio('Choose PnL Basis', ('Change', 'MTM', 'MTM (Exc. Forex)'),
-                                                           horizontal=True)                                          
+                                                           horizontal=True)                      
                         if locals()[f"{x}_stats"] == 'MWR':
                             if locals()[f"{x}_stats1"] == 'Change':
-                                if st.session_state.get(f"button60") != True:
-                                    st.session_state["button60"] = locals()[f"{x}_inbut"]  
-                                if st.session_state.get("button21") != True:
-                                    st.session_state["button21"] = locals()[f"{x}_inbut1"]  
-                                if st.session_state.get("exit") != True:
-                                    st.session_state["exit"] = locals()[f"{x}_inbut2"]  
-                                if st.session_state["exit"] == True:
-                                    st.session_state["button60"] = False
-                                    st.session_state["button21"] = False
-                                    st.session_state["exit"] = False                                                                    
-                                if (st.session_state["button60"]==True) and (st.session_state["button21"]==True):
-                                    st.warning("Click on exit button before switching between views")
-                                  #  st.session_state["exit"] = True
-                                elif st.session_state["button60"] == True:
-                                    st.session_state["button21"] = False
-                                    cap_data1 = cap_data.iloc[-60:]
-                                    change_data1 = change_data.iloc[-60:]
-                                    deposit_data1 = deposit_data.iloc[-60:]
-                                    self.baskets_mwr_page(x, cap_data1, change_data1, deposit_data1)
-                                elif st.session_state["button21"] == True:
-                                    st.session_state["button60"] = False
-                                    cap_data2 = cap_data.iloc[-21:]
-                                    change_data2 = change_data.iloc[-21:]
-                                    deposit_data2 = deposit_data.iloc[-21:]
-                                    self.baskets_mwr_page(x, cap_data2, change_data2, deposit_data2)                                    
-                                elif (st.session_state["button60"]!=True) and (st.session_state["button21"]!=True):
-                                    self.baskets_mwr_page(x, cap_data, change_data, deposit_data)
+                                self.baskets_mwr_page(x, cap_data, change_data, deposit_data)
                             elif locals()[f"{x}_stats1"] == 'MTM':
-                                if st.session_state.get(f"button60") != True:
-                                    st.session_state["button60"] = locals()[f"{x}_inbut"]  
-                                if st.session_state.get("button21") != True:
-                                    st.session_state["button21"] = locals()[f"{x}_inbut1"]  
-                                if st.session_state.get("exit") != True:
-                                    st.session_state["exit"] = locals()[f"{x}_inbut2"]                                  
-                                if st.session_state["exit"] == True:
-                                    st.session_state["button60"] = False
-                                    st.session_state["button21"] = False
-                                    st.session_state["exit"] = False  
-                                if (st.session_state["button60"]==True) and (st.session_state["button21"]==True):
-                                    st.warning("Click on exit button before switching between views")
-                                elif st.session_state["button60"] == True:
-                                    st.session_state["button21"] = False
-                                    cap_data3 = cap_data.iloc[-60:]
-                                    mtm_data_forex3 = mtm_data_forex.iloc[-60:]
-                                    deposit_data3 = deposit_data.iloc[-60:]                                
-                                    self.baskets_mwr_page(x, cap_data3, mtm_data_forex3, deposit_data3)
-                                elif st.session_state["button21"] == True:
-                                    st.session_state["button60"] = False
-                                    cap_data4 = cap_data.iloc[-21:]
-                                    mtm_data_forex4 = mtm_data_forex.iloc[-21:]
-                                    deposit_data4 = deposit_data.iloc[-21:]   
-                                    self.baskets_mwr_page(x, cap_data4, mtm_data_forex4, deposit_data4)
-                                elif (st.session_state["button60"]!=True) and (st.session_state["button21"]!=True):                                 
-                                    self.baskets_mwr_page(x, cap_data, mtm_data_forex, deposit_data)
+                                self.baskets_mwr_page(x, cap_data, mtm_data_forex, deposit_data)
                             elif locals()[f"{x}_stats1"] == 'MTM (Exc. Forex)':
-                                if st.session_state.get(f"button60") != True:
-                                    st.session_state["button60"] = locals()[f"{x}_inbut"]  
-                                if st.session_state.get("button21") != True:
-                                    st.session_state["button21"] = locals()[f"{x}_inbut1"]  
-                                if st.session_state.get("exit") != True:
-                                    st.session_state["exit"] = locals()[f"{x}_inbut2"]                                  
-                                if st.session_state["exit"] == True:
-                                    st.session_state["button60"] = False
-                                    st.session_state["button21"] = False
-                                    st.session_state["exit"] = False   
-                                if (st.session_state["button60"]==True) and (st.session_state["button21"]==True):
-                                    st.warning("Click on exit button before switching between views")
-                                elif st.session_state["button60"] == True:
-                                    st.session_state["button21"] = False
-                                    cap_data5 = cap_data.iloc[-60:]
-                                    mtm_data5 = mtm_data.iloc[-60:]
-                                    deposit_data5 = deposit_data.iloc[-60:]
-                                    self.baskets_mwr_page(x, cap_data5, mtm_data5, deposit_data5)  
-                                elif st.session_state["button21"] == True:
-                                    st.session_state["button60"] = False
-                                    cap_data6 = cap_data.iloc[-21:]
-                                    mtm_data6 = mtm_data.iloc[-21:]
-                                    deposit_data6 = deposit_data.iloc[-21:]     
-                                    self.baskets_mwr_page(x, cap_data6, mtm_data6, deposit_data6)
-                                elif (st.session_state["button60"]!=True) and (st.session_state["button21"]!=True):                                                                   
-                                    self.baskets_mwr_page(x, cap_data, mtm_data, deposit_data)
+                                self.baskets_mwr_page(x, cap_data, mtm_data, deposit_data)
                         elif locals()[f'{x}_stats'] == 'TWR':
                             if locals()[f"{x}_stats1"] == 'Change':
-                                if st.session_state.get(f"button60") != True:
-                                    st.session_state["button60"] = locals()[f"{x}_inbut"]  
-                                if st.session_state.get("button21") != True:
-                                    st.session_state["button21"] = locals()[f"{x}_inbut1"]  
-                                if st.session_state.get("exit") != True:
-                                    st.session_state["exit"] = locals()[f"{x}_inbut2"]                                   
-                                if st.session_state["exit"] == True:
-                                    st.session_state["button60"] = False
-                                    st.session_state["button21"] = False
-                                    st.session_state["exit"] = False   
-                                if (st.session_state["button60"]==True) and (st.session_state["button21"]==True):
-                                    st.warning("Click on exit button before switching between views")
-                                elif st.session_state["button60"] == True:
-                                    st.session_state["button21"] = False
-                                    cap_data7 = cap_data.iloc[-60:]
-                                    change_data7 = change_data.iloc[-60:]
-                                    deposit_data7 = deposit_data.iloc[-60:]
-                                    self.baskets_twr_page(x, cap_data7, change_data7, deposit_data7) 
-                                elif st.session_state["button21"] == True:
-                                    st.session_state["button60"] = False
-                                    cap_data8 = cap_data.iloc[-21:]
-                                    change_data8 = change_data.iloc[-21:]
-                                    deposit_data8 = deposit_data.iloc[-21:]     
-                                    self.baskets_twr_page(x, cap_data8, change_data8, deposit_data8) 
-                                elif (st.session_state["button60"]!=True) and (st.session_state["button21"]!=True):                               
-                                    self.baskets_twr_page(x, cap_data, change_data, deposit_data)
+                                self.baskets_twr_page(x, cap_data, change_data, deposit_data)
                             if locals()[f"{x}_stats1"] == 'MTM':
-                                if st.session_state.get(f"button60") != True:
-                                    st.session_state["button60"] = locals()[f"{x}_inbut"]  
-                                if st.session_state.get("button21") != True:
-                                    st.session_state["button21"] = locals()[f"{x}_inbut1"]  
-                                if st.session_state.get("exit") != True:
-                                    st.session_state["exit"] = locals()[f"{x}_inbut2"]                                   
-                                if st.session_state["exit"] == True:
-                                    st.session_state["button60"] = False
-                                    st.session_state["button21"] = False
-                                    st.session_state["exit"] = False   
-                                if (st.session_state["button60"]==True) and (st.session_state["button21"]==True):
-                                    st.warning("Click on exit button before switching between views")
-                                elif st.session_state["button60"] == True:
-                                    st.session_state["button21"] = False
-                                    cap_data9 = cap_data.iloc[-60:]
-                                    mtm_data_forex9 = mtm_data_forex.iloc[-60:]
-                                    deposit_data9 = deposit_data.iloc[-60:]
-                                    self.baskets_twr_page(x, cap_data9, mtm_data_forex9, deposit_data9) 
-                                elif st.session_state["button21"] == True:
-                                    st.session_state["button60"] = False
-                                    cap_data10 = cap_data.iloc[-21:]
-                                    mtm_data_forex10 = mtm_data_forex.iloc[-21:]
-                                    deposit_data10 = deposit_data.iloc[-21:]     
-                                    self.baskets_twr_page(x, cap_data10, mtm_data_forex10, deposit_data10) 
-                                elif (st.session_state["button60"]!=True) and (st.session_state["button21"]!=True):                                
-                                    self.baskets_twr_page(x, cap_data, mtm_data_forex, deposit_data)    
+                                self.baskets_twr_page(x, cap_data, mtm_data_forex, deposit_data)    
                             if locals()[f"{x}_stats1"] == 'MTM (Exc. Forex)':
-                                if st.session_state.get(f"button60") != True:
-                                    st.session_state["button60"] = locals()[f"{x}_inbut"]  
-                                if st.session_state.get("button21") != True:
-                                    st.session_state["button21"] = locals()[f"{x}_inbut1"]  
-                                if st.session_state.get("exit") != True:
-                                    st.session_state["exit"] = locals()[f"{x}_inbut2"]                                   
-                                if st.session_state["exit"] == True:
-                                    st.session_state["button60"] = False
-                                    st.session_state["button21"] = False
-                                    st.session_state["exit"] = False   
-                                if (st.session_state["button60"]==True) and (st.session_state["button21"]==True):
-                                    st.warning("Click on exit button before switching between views")
-                                elif st.session_state["button60"] == True:
-                                    st.session_state["button21"] = False
-                                    cap_data11 = cap_data.iloc[-60:]
-                                    mtm_data11 = mtm_data.iloc[-60:]
-                                    deposit_data11 = deposit_data.iloc[-60:]
-                                    self.baskets_twr_page(x, cap_data11, mtm_data11, deposit_data11) 
-                                elif st.session_state["button21"] == True:
-                                    st.session_state["button60"] = False
-                                    cap_data12 = cap_data.iloc[-21:]
-                                    mtm_data12 = mtm_data.iloc[-21:]
-                                    deposit_data12 = deposit_data.iloc[-21:]     
-                                    self.baskets_twr_page(x, cap_data12, mtm_data12, deposit_data12)  
-                                elif (st.session_state["button60"]!=True) and (st.session_state["button21"]!=True):                               
-                                    self.baskets_twr_page(x, cap_data, mtm_data, deposit_data)                                                               
+                                self.baskets_twr_page(x, cap_data, mtm_data, deposit_data)                                                               
                
                 
-        if baskets_radio == text11:
+        if baskets_radio == 'Baskets 2024':
             print('Baskets 2024')
             self.baskets = self.baskets_lst
             self.init_cap = self.start_cap
@@ -1183,28 +1016,16 @@ class basket_analysis:
                 l = locale.currency(l, symbol=True, grouping=True)
                 z = locale.currency(z, symbol=True, grouping=True)
                 new_val = locale.currency(new_val, symbol=True, grouping=True)
-                text1 = f":{col_change}[${x}$]"
-                text2 = f"📅:{col_change}[Inception Date:] :{col_change}[{b}]"
-                text3 = f"🛑:{col_change}[{new_el}] :{col_change}[{c}]"
-                text4 = f"💰:{col_change}[Invested Amount:] :{col_change}[{y.replace('.00','')}]"
-                text5 = f"💰:{col_dep}[{store_val}:] :{col_dep}[{z.replace('.00','')}]"
-                text6 = f"💰:{col_change}[Ending Value:] :{col_change}[{new_val.replace('.00', '')}]"
-                text7 = f"💰:{col_change}[PnL:] :{col_change}[{a.replace('.00', '')}]"
-                text8 = f"{emo} :{col_twr}[TWR:] :{col_twr}[{d:.2f}%]"
-                text9 = f"{emo} :{col_mwr}[MWR:] :{col_mwr}[{e*100:.2f}%]"
-                
-                locals()[f'{x}_button'] = st.sidebar.button(r'''{0}\
-                                                            {1}\
-                                                            {2}\
-                                                            {3}\
-                                                            {4}\
-                                                            {5}\
-                                                            {6}\
-                                                            {7}\
-                                                            {8}
-                                                            '''.format(text1, text2, text3, text4, text5,
-                                                                       text6, text7, text8, text9), 
-                                                            use_container_width=False)
+                locals()[f'{x}_button'] = st.sidebar.button(f''':{col_change}[{x}]\
+                                                            \n 📅:{col_change}[Inception Date:] :{col_change}[{b}]\
+                                                            \n 🛑:{col_change}[{new_el}] :{col_change}[{c}]\
+                                                           \n  💰:{col_change}[Invested Amount:] :{col_change}[{y.replace('.00','')}]\
+                                                           \n  💰:{col_dep}[{store_val}: {z.replace('.00','')}]\n\
+                                                           \n  💰:{col_change}[Ending Value:] :{col_change}[{new_val.replace('.00', '')}]\n\
+                                                           \n  💰:{col_change}[PnL:] :{col_change}[{a.replace('.00', '')}]\n\
+                                                           \n  {emo} :{col_twr}[TWR:] :{col_twr}[{d:.2f}%]\n\
+                                                            \n {emo} :{col_mwr}[MWR:] :{col_mwr}[{e*100:.2f}%]
+                                                            ''', use_container_width=False)
                 if st.session_state.get(f'{x}') != True:
                     st.session_state[f'{x}'] = locals()[f'{x}_button']
                     
@@ -1299,8 +1120,7 @@ class basket_analysis:
 
             
             
-spreadsheet_name1 = st.secrets["database"]["spreadsheet_name"]
-spreadsheet_name = ast.literal_eval(spreadsheet_name1)
-sheet = spreadsheet_name[5]
-obj = basket_analysis(spreadsheet_name,sheet)
+spreadsheet_name = ['capital', 'change', 'mtm', 'mtm_forex', 'cash_flows']
+database_name = 'dashboard_2024.xlsx'
+obj = basket_analysis(spreadsheet_name, database_name)
 obj.main()

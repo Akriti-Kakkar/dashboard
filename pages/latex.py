@@ -65,7 +65,8 @@ st.button(f''':blue[x\t]\n \
           use_container_width=True)
 st.metric(":green[Metric]",  200000)
 #st.status('Success')
-text = "Latex Format"
-text1 = "new stuff"
+#finalized
+text = ":green[$$Latex Format$$]"
+text1 = ":gray[$$new stuff$$]"
 st.button(r"${} \\textcolor{{red}}{{{}}}$".format(text, text1), use_container_width=True)
-
+st.button(r"{}$\>$ $\>$ $\>$ $\>${}".format(text, text1), use_container_width=True)

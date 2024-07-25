@@ -3,14 +3,20 @@ import pandas as pd
 from datetime import timedelta, date
 import numpy as np
 
-def color_code(col1, col2):
-    if col1 > col2:
+def color_code(col1, col2=0):
+    if col1 >= col2:
         return "green"
     else:
         return "red"
     
+def color_code_kwarg(col1):
+    if (col1 > 0) | (col1 == 0):
+        return "color: green"
+    else:
+        return "color: red"
+    
 def color_kwargs(col1):
-    if col1.startswith("-"):
+    if col1.startswith("-") or col1.startswith("("):
         return "color: red"
     else:
         return "color: green"
