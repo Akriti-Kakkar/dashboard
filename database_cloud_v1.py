@@ -56,9 +56,10 @@ class database:
         return "Connection established successfully"
     
 
-    def close_connection(self) -> None:
-        self.conn.commit()
-        self.conn.close()
+    def write_data(self):
+        self.data = self.data.drop("Date", axis=1)
+        values = self.data.values.tolist()
+        self.sh.append_rows(values)  
     
 obj = database(ticker='^GSPC')
 date = obj.get_last_working_day()

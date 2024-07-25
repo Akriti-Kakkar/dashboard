@@ -1183,7 +1183,7 @@ class basket_analysis:
                 l = locale.currency(l, symbol=True, grouping=True)
                 z = locale.currency(z, symbol=True, grouping=True)
                 new_val = locale.currency(new_val, symbol=True, grouping=True)
-                text1 = f":{col_change}[${x}$]"
+                text1 = f":{col_change}[{x}]"
                 text2 = f"📅:{col_change}[Inception Date:] :{col_change}[{b}]"
                 text3 = f"🛑:{col_change}[{new_el}] :{col_change}[{c}]"
                 text4 = f"💰:{col_change}[Invested Amount:] :{col_change}[{y.replace('.00','')}]"
