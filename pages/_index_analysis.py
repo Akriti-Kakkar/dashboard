@@ -3,8 +3,6 @@ import yfinance as yf
 from typing import *
 import functools
 from streamlit import *
-import sqlite3
-from database import database
 import pandas as pd
 import altair as alt
 from datetime import timedelta

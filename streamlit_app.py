@@ -146,7 +146,7 @@ class homepage:
             st.metric("Stdev", value=f"{pnl5}", delta=dtp4)        
         
     def template(self):
-        locale.setlocale(locale.LC_ALL, 'English_United States.1252')
+        locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
         locale.override_localeconv = {'n_sign_posn':1}
         tab1, tab2, tab3, tab4, tab5 = st.tabs(self.sort_baskets_lst1)
         with tab1:

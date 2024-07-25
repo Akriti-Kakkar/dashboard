@@ -19,12 +19,6 @@ import ast
 
 class basket_analysis:
     def __init__(self, spreadsheet_name: list, sheet: str) -> None:
-        
-        '''
-        make baskets 2024 label dynamic to take maximum year
-        sort baskets lst based on change
-        self.sh = self.sh is silenced, need to verify 
-        '''
         self.spreadsheet_name = spreadsheet_name
         self.sheet = sheet
     
@@ -968,9 +962,32 @@ class basket_analysis:
                         mtm_data = mtm_data[start_:end_]
                         mtm_data_forex = mtm_data_forex[start_:end_]                        
                         locals()[f"{x}_stats"] = st.radio('Choose Type Of Stats', ('MWR', 'TWR'), key=f'{x,y}',
-                                                          horizontal=True)
+                                                          horizontal=True,
+                                                            help='''
+                                                            Money Weighted Returns (Modified Dietz Method): 
+                                                            Ending Value - Initial - Cash Flow/Initial Value + Weighted Cash Flow
+                                                            
+                                                            Time Weighted Returns (Compounded Returns):
+                                                            [(1 + RN) * (1 + RN) * ... -1] * 100
+                                                            
+                                                            where,
+                                                            RN = Ending Value/(Initial Value + Cash Flow)-1 
+                                                            '''                                                          )
                         locals()[f"{x}_stats1"] = st.radio('Choose PnL Basis', ('Change', 'MTM', 'MTM (Exc. Forex)'),
-                                                           horizontal=True)                                          
+                                                           horizontal=True, help='''
+                        
+                        Change = mark-to-market valuations of assets including forex - 
+                        cost (commision, interest, taxes, etc) +
+                        dividend - accruals charges + accrual income - basket-level charges +
+                        basket-level income
+                        
+                        MTM = mark-to-market valuations of assets including forex - 
+                        cost (commision, interest, taxes, etc) +
+                        dividend
+                        
+                        MTM (Exc. Forex) = mark-to-market valuations of assets excluding forex - 
+                        cost (commision, interest, taxes, etc) +
+                        dividend''')                                          
                         if locals()[f"{x}_stats"] == 'MWR':
                             if locals()[f"{x}_stats1"] == 'Change':
                                 if st.session_state.get(f"button60") != True:
@@ -1170,7 +1187,7 @@ class basket_analysis:
                                                 self.start, self.end_date,
                                                 self.twr, self.mwr)):
                 print('init for loop for baskets 2024')
-                locale.setlocale(locale.LC_ALL, 'English_United States.1252')
+                locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
                 locale.override_localeconv = {'n_sign_posn':1}
                 new_val = l+a
                 col_change = color_code(a,0) #inception date, end date, invested amount, ending value, change
@@ -1263,7 +1280,7 @@ class basket_analysis:
                                                 self.start, self.end_date,
                                                 self.twr, self.mwr)):
                 print('init for loop for active baskets')
-                locale.setlocale(locale.LC_ALL, 'English_United States.1252')
+                locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
                 locale.override_localeconv = {'n_sign_posn':1}
                 new_val = l+a
                 a = locale.currency(a, symbol=True, grouping=True)
