@@ -100,7 +100,7 @@ class homepage:
             else:
                 dtp5 = self.new_dict["Negative Days"]
             st.info("Positive Days", icon='📌')                     
-            st.metric("Positive Days", value=f"{self.new_dict["Positive Days"]} Days", delta=int(dtp5))                           
+            st.metric("Positive Days", value=f"""{self.new_dict["Positive Days"]} Days""", delta=int(dtp5))                           
         with tcol2:
             st.info("Inception PnL", icon='📌')
             pnl = locale.currency(self.new_dict["Inception PnL"], grouping=True,
@@ -125,7 +125,7 @@ class homepage:
             st.info("Minimum PnL", icon='📌')                     
             st.metric("Minimum PnL", value=f"{pnl4}", delta=dtp3)    
             st.info("Negative Days", icon='📌')                     
-            st.metric("Negative Days", value=f"{self.new_dict["Negative Days"]} Days", delta=int(dtp5), 
+            st.metric("Negative Days", value=f"""{self.new_dict["Negative Days"]} Days""", delta=int(dtp5), 
                         delta_color="normal")                             
         with tcol3:
             st.info("Inception Date", icon='📌')
