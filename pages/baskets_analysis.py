@@ -1187,7 +1187,7 @@ class basket_analysis:
                                                 self.start, self.end_date,
                                                 self.twr, self.mwr)):
                 print('init for loop for baskets 2024')
-                locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
+                locale.setlocale(locale.LC_ALL, 'en_US')
                 locale.override_localeconv = {'n_sign_posn':1}
                 new_val = l+a
                 col_change = color_code(a,0) #inception date, end date, invested amount, ending value, change
@@ -1280,7 +1280,7 @@ class basket_analysis:
                                                 self.start, self.end_date,
                                                 self.twr, self.mwr)):
                 print('init for loop for active baskets')
-                locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
+                locale.setlocale(locale.LC_ALL, 'en_US')
                 locale.override_localeconv = {'n_sign_posn':1}
                 new_val = l+a
                 a = locale.currency(a, symbol=True, grouping=True)
