@@ -24,7 +24,7 @@ class basket_analysis:
     
     @staticmethod
     def page_config() -> None:
-        st.set_page_config(page_title='Dashboard', page_icon='🌎', layout='wide')
+        st.set_page_config(page_title='Dashboard', page_icon='🌎')
         st.sidebar.image('htts_fund_logo.png', caption='HTTS Fund')
         #st.subheader('📈 Baskets Vs S&P Analysis')
         # Inject custom CSS to set the width of the sidebar
@@ -236,7 +236,7 @@ class basket_analysis:
                                  capital)
                 st.metric('1D Return', value=f"{mwr*100:.2f}%")
                 st.write(f"S&P: {ind_ret1*100:.2f}%")
-                an = comparison(mwr, ind_ret1)
+                an = comparison(mwr, ind_ret1, "normal")
                 em_an = comparison_emoji(an)
                 st.warning(f"{em_an} Basket {an} S&P")
             except IndexError:
@@ -251,7 +251,7 @@ class basket_analysis:
                 ind_pnl = ind_lst - ind_fst
                 ind_reti = ind_pnl/ind_fst
                 st.write(f"S&P: {ind_reti*100:.2f}%")
-                an1 = comparison(mwr_, ind_reti)
+                an1 = comparison(mwr_, ind_reti, "normal")
                 em_an1 = comparison_emoji(an1)
                 st.warning(f"{em_an1} Basket {an1} S&P")
             except IndexError:
@@ -272,7 +272,7 @@ class basket_analysis:
                 pos_days1 = win_days(ind_data, 'mwr')
                 st.metric('Positive Days', value=f"{pos_days} Days")
                 st.write(f"S&P: {pos_days1} Days")
-                an2 = comparison(pos_days, pos_days1)
+                an2 = comparison(pos_days, pos_days1, "normal")
                 em_an2 = comparison_emoji(an2)
                 st.warning(f"{em_an2} Basket {an2} S&P")
             except:
@@ -281,7 +281,7 @@ class basket_analysis:
             try:
                 neg_days = loss_days(ch, basket)
                 neg_days1 = loss_days(ind_data, 'mwr')
-                an3 = comparison_alt(neg_days, neg_days1)
+                an3 = comparison_alt(neg_days, neg_days1, "normal")
                 em_an3 = comparison_emoji(an3)
                 st.metric('Negative Days', value=f'{neg_days} Days')
                 st.write(f"S&P: {neg_days1} Days")
@@ -294,7 +294,7 @@ class basket_analysis:
                 end_date = ch[basket].last_valid_index()
                 du = duration(start_date, end_date)
                 du1 = duration(ind1_, ind_)
-                an4 = comparison(du, du1)
+                an4 = comparison(du, du1, "normal")
                 em_an4 = comparison_emoji(an4)
                 st.metric('Duration', value=f'{du} Days')
                 st.write(f"S&P: {du1} Days")
@@ -320,7 +320,7 @@ class basket_analysis:
                         n=21
                         )
                 mwr21 = last_n_mwr(wt_cash21, ch[basket], capital21, n=21) 
-                an5 = comparison(mwr21, ind_mwr21)
+                an5 = comparison(mwr21, ind_mwr21, "normal")
                 em_an5 = comparison_emoji(an5)
                 st.info('21D Return', icon='📌')
                 st.metric('21D Return', value=f"{mwr21*100:.2f}%") 
@@ -363,7 +363,7 @@ class basket_analysis:
                 mwr_pos = pos_pnl / base_cap
                 st.info('Positive PnL (%)', icon='📌')
                 st.metric('Positive PnL (%)', value=f"{mwr_pos*100:.2f}%") 
-                an6 = comparison(mwr_pos, ind_pos_ret)
+                an6 = comparison(mwr_pos, ind_pos_ret, "normal")
                 em_an6 = comparison_emoji(an6)
                 st.write(f"S&P: {ind_pos_ret*100:.2f}%")
                 st.warning(f"{em_an6} Basket {an6} S&P")
@@ -375,7 +375,7 @@ class basket_analysis:
                 end_val = base_cap + ch[basket].sum()                
                 co = cagr(base_cap, end_val, du)
                 co1 = cagr(ind_fst, ind_lst, du1)
-                an7 = comparison(co, co1)
+                an7 = comparison(co, co1, "normal")
                 em_an7 = comparison_emoji(an7)
                 st.metric('CAGR', value = f"{co*100:.2f}%")
                 st.write(f"S&P: {co1*100:.2f}%")
@@ -386,7 +386,7 @@ class basket_analysis:
             try:
                 wl_ind = win_loss(pos_days1, neg_days1)
                 wl = win_loss(pos_days, neg_days)  
-                an8 = comparison(wl, wl_ind)
+                an8 = comparison(wl, wl_ind, "normal")
                 em_an8 = comparison_emoji(an8)
                 st.metric('Win-Loss Ratio', value=f"{wl:.2f}")
                 st.write(f"S&P: {wl_ind:.2f}")
@@ -413,7 +413,7 @@ class basket_analysis:
                         )
                 mwr60 = last_n_mwr(wt_cash60, ch[basket], capital60,
                                    n=60)  
-                an9 = comparison(mwr60, ind_mwr60)
+                an9 = comparison(mwr60, ind_mwr60, "normal")
                 em_an9 = comparison_emoji(an9)
                 st.info('60D Return', icon='📌')
                 st.metric('60D Return', value=f"{mwr60*100:.2f}%") 
@@ -433,13 +433,13 @@ class basket_analysis:
             st.info('Negative PnL', icon='📌')
             st.metric('Negative PnL', value=neg_pnl1)  
             st.write("S&P: - ")
-            st_cp = comparison(base_cap1, end_val1)
+            st_cp = comparison(base_cap1, end_val1, "normal")
             st_em = comparison_emoji(st_cp)
             st.warning(f"{st_em} Sum of negative pnl over the horizon")
             try:
                 mwr_neg = neg_pnl / base_cap
                 st.info('Negative PnL (%)', icon='📌')
-                an10 = comparison(mwr_neg, ind_neg_ret)
+                an10 = comparison(mwr_neg, ind_neg_ret, "normal")
                 st.metric('Negative PnL (%)', value=f"{mwr_neg*100:.2f}%") 
                 st.write(f"S&P: {ind_neg_ret*100:.2f}%")
                 em_an10 = comparison_emoji(an10)
@@ -461,7 +461,7 @@ class basket_analysis:
             try:
                 ind_wn = win_pct(pos_days1, du1)
                 wn = win_pct(pos_days, du) 
-                an11 = comparison(wn, ind_wn)
+                an11 = comparison(wn, ind_wn, "normal")
                 st.metric('Winning Pct', value = f"{wn*100:.2f}%")
                 st.write(f"S&P: {ind_wn*100:.2f}%")
                 em_an11 = comparison_emoji(an11)
@@ -537,26 +537,16 @@ class basket_analysis:
         met_pl = st.empty()
         met_pl1 = st.empty()
         st.info(f"{lst_yr} PnL", icon="💲")
-        if sum_year > 0:
-            inc11 = sum_year
-        else:
-            inc11 = 0
         inc1 = locale.currency(sum_year, symbol=True, grouping=True)
         st.metric(label=f"{lst_yr} PnL",
-                       value=inc1,
-                       delta=inc11)    
+                       value=inc1)    
         frame1 = frame.drop("Year", axis=1)    
         sum_frame = frame1.sum(axis=0).sort_values(ascending=False)
         sum_frame_data = pd.DataFrame(sum_frame, columns=["PnL"])
         inc = locale.currency(sum_frame.sum(), symbol=True, grouping=True)
         met_pl.info("Total PnL", icon="💲")
-        if sum_frame.sum() > 0:
-            inc_del = sum_frame.sum()
-        else:
-            inc_del = 0
         met_pl1.metric(label="Total PnL",
-                       value=inc,
-                       delta=inc_del)
+                       value=inc)
         sum_frame_data['Baskets'] = sum_frame_data.index
         sum_frame_data = sum_frame_data.reset_index(drop=True)
         sum_frame_data.index = sum_frame_data.index+1
@@ -641,115 +631,118 @@ class basket_analysis:
         mwr_placeholder100.plotly_chart(fig)  
 
         active = duration(start, end)
-        mwr_comp1 = comparison(active, active)
+        mwr_comp1 = comparison(active, active, "normal")
         mwr_em = comparison_emoji(mwr_comp1)
         end_all = ret_twr_data.loc[ret_twr_data.index[-1], 'ec']
         end_all_ind = ind_data_twr.loc[ind_data_twr.index[-1], 'ec']
-        mwr_comp2 = comparison(end_all, end_all_ind)
+        mwr_comp2 = comparison(end_all, end_all_ind, "normal")
         mwr_em2 = comparison_emoji(mwr_comp2)
         ret = cagr(allocation, end_all, active)
         ret_ind = cagr(allocation, end_all_ind, active)
-        mwr_comp3 = comparison(ret, ret_ind)
+        mwr_comp3 = comparison(ret, ret_ind, "normal")
         mwr_em3 = comparison_emoji(mwr_comp3)
         mn_ret = mu(ret_twr_data, 'returns')
         mn_ret_ind = mu(ind_data_twr, 'returns')
-        mwr_comp4 = comparison(mn_ret, mn_ret_ind)
+        mwr_comp4 = comparison(mn_ret, mn_ret_ind, "normal")
         mwr_em4 = comparison_emoji(mwr_comp4)
         stde = stdev(ret_twr_data, 'returns')
         stde_ind = stdev(ind_data_twr, 'returns')
-        mwr_comp5 = comparison_alt(stde, stde_ind)
+        mwr_comp5 = comparison(stde, stde_ind, "risk")
         mwr_em5 = comparison_emoji(mwr_comp5) 
         ann_vol = annualized_vol(stde)
         ann_vol_ind = annualized_vol(stde_ind)
-        mwr_comp6 = comparison_alt(ann_vol, ann_vol_ind)
+        mwr_comp6 = comparison(ann_vol, ann_vol_ind, "risk")
         mwr_em6 = comparison_emoji(mwr_comp6)
         shp = sharpe_ratio(ret, ann_vol)
         shp_ind = sharpe_ratio(ret_ind, ann_vol_ind)
-        mwr_comp7 = comparison(shp, shp_ind)
+        mwr_comp7 = comparison(shp, shp_ind, "normal")
         mwr_em7 = comparison_emoji(mwr_comp7)
         dd = drawdown(ret_twr_data, 'ec')
         dd_ind = drawdown(ind_data_twr, 'ec')
         mdd = max_drawdown(dd)
         mdd_ind = max_drawdown(dd_ind)
-        mwr_comp9 = comparison_alt(mdd, mdd_ind)
+        mwr_comp9 = comparison_alt(mdd, mdd_ind, "risk")
         mwr_em9 = comparison_emoji(mwr_comp9)
         ad = avg_drawdown(dd) 
         ad_ind = avg_drawdown(dd_ind)
-        mwr_comp10 = comparison(ad, ad_ind)
+        mwr_comp10 = comparison_alt(ad, ad_ind, "risk")
         mwr_em10 = comparison_emoji(mwr_comp10)
         wn_d = win_days(ret_twr_data, 'returns')
         wn_d_ind = win_days(ind_data_twr, 'returns')
-        mwr_comp11 = comparison(wn_d, wn_d_ind)
+        mwr_comp11 = comparison(wn_d, wn_d_ind, "normal")
         mwr_em11 = comparison_emoji(mwr_comp11)
         ln_d = loss_days(ret_twr_data, 'returns')
         ln_d_ind = loss_days(ind_data_twr, 'returns')
-        mwr_comp12 = comparison_alt(ln_d, ln_d_ind)
+        mwr_comp12 = comparison_alt(ln_d, ln_d_ind, "normal")
         mwr_em12 = comparison_emoji(mwr_comp12)
         wn = win_pct(wn_d, active)
         wn_ind = win_pct(wn_d_ind, active)
-        mwr_comp8 = comparison(wn, wn_ind)
+        mwr_comp8 = comparison(wn, wn_ind, "normal")
         mwr_em8 = comparison_emoji(mwr_comp8)
         wl = win_loss(wn_d, ln_d)
         wl_ind = win_loss(wn_d_ind, ln_d_ind)
-        mwr_comp13 = comparison(wl, wl_ind)
+        mwr_comp13 = comparison(wl, wl_ind, "normal")
         mwr_em13 = comparison_emoji(mwr_comp13)
         dow = downside_deviation(ret_twr_data, 'returns')
         dow_ind = downside_deviation(ind_data_twr, 'returns')
-        mwr_comp14 = comparison_alt(dow, dow_ind)
+        mwr_comp14 = comparison_alt(dow, dow_ind, "risk")
         mwr_em14 = comparison_emoji(mwr_comp14)
         sort1 = sortino_ratio(ret, dow)
         sort1_ind = sortino_ratio(ret_ind, dow_ind)
-        mwr_comp15 = comparison(sort1, sort1_ind)
+        mwr_comp15 = comparison(sort1, sort1_ind, "normal")
         mwr_em15 = comparison_emoji(mwr_comp15)
         max_cons_pos = getMaxLength(ret_twr_data['returns'], 1)
         max_cons_pos_ind = getMaxLength(ind_data_twr['returns'], 1)
-        mwr_comp16 = comparison(max_cons_pos, max_cons_pos_ind)
+        mwr_comp16 = comparison(max_cons_pos, max_cons_pos_ind, "normal")
         mwr_em16 = comparison_emoji(mwr_comp16)
         max_cons_neg = getMaxLength(ret_twr_data['returns'], 0)
         max_cons_neg_ind = getMaxLength(ind_data_twr['returns'], 0)
-        mwr_comp17 = comparison_alt(max_cons_neg, max_cons_neg_ind)
+        mwr_comp17 = comparison_alt(max_cons_neg, max_cons_neg_ind, "normal")
         mwr_em17 = comparison_emoji(mwr_comp17)
         m_ret = avg_monthly_twr(ret_twr_data, 'returns')
         m_ret_ind = avg_monthly_twr(ind_data_twr, 'returns')
-        mwr_comp18 = comparison(m_ret, m_ret_ind)
+        mwr_comp18 = comparison(m_ret, m_ret_ind, "normal")
         mwr_em18 = comparison_emoji(mwr_comp18)
         one_ret = last_n_twr(ret_twr_data, 'returns', 252, False)
         one_ret_ind = last_n_twr(ind_data_twr, 'returns', 252, False)
-        mwr_comp19 = comparison(one_ret, one_ret_ind)
+        mwr_comp19 = comparison(one_ret, one_ret_ind, "normal")
+        mwr_em19 = comparison_emoji(mwr_comp19)
         od_ret = last_n_twr(ret_twr_data, 'returns', 1, False)
         od_ret_ind = last_n_twr(ind_data_twr, 'returns', 1, False)
-        mwr_comp20 = comparison(od_ret, od_ret_ind)
+        mwr_comp20 = comparison(od_ret, od_ret_ind, "normal")
         mwr_em20 = comparison_emoji(mwr_comp20)
         t1d_ret = last_n_twr(ret_twr_data, 'returns', 21, False)
         t1d_ret_ind = last_n_twr(ind_data_twr, 'returns', 21, False)
-        mwr_comp21 = comparison(t1d_ret, t1d_ret_ind) 
+        mwr_comp21 = comparison(t1d_ret, t1d_ret_ind, "normal") 
         mwr_em21 = comparison_emoji(mwr_comp21)           
         s0d_ret = last_n_twr(ret_twr_data, 'returns', 60, False)
         s0d_ret_ind = last_n_twr(ind_data_twr, 'returns', 60, False)
-        mwr_comp22 = comparison(s0d_ret, s0d_ret_ind)
+        mwr_comp22 = comparison(s0d_ret, s0d_ret_ind, "normal")
         mwr_em22 = comparison_emoji(mwr_comp22)
         dep_ = dep[basket].sum()
         dep_ind = 0
         beta_st = beta(ret_twr_data['returns'], ind_data_twr['returns'])
         beta_in = 1
-        mwr_comp23 = comparison(beta_st, beta_in)
+        mwr_comp23 = comparison(beta_st, beta_in, "risk")
         mwr_em23 = comparison_emoji(mwr_comp23)
         tr = treynor_ratio(ret, beta_st)
         tr_in = treynor_ratio(ret_ind, beta_in)
-        mwr_comp24 = comparison(tr, tr_in)
+        mwr_comp24 = comparison(tr, tr_in, "normal")
         mwr_em24 = comparison_emoji(mwr_comp24)
         alpha_st = alpha(ret, ret_ind)
         alpha_in = alpha(ret_ind, ret_ind)
-        mwr_comp25 = comparison(alpha_st, alpha_in)
+        mwr_comp25 = comparison(alpha_st, alpha_in, "normal")
         mwr_em25 = comparison_emoji(mwr_comp25)
         er = required_return(beta_st, ret_ind)
         er_in = required_return(beta_in, ret_ind)
-        mwr_comp26 = comparison(er, er_in)
+        mwr_comp26 = comparison(er, er_in, "performance")
         mwr_em26 = comparison_emoji(mwr_comp26)
         aj = jenson_alpha(ret, er)
         aj_in =jenson_alpha(ret_ind, er_in)
-        mwr_comp27 = comparison(aj, aj_in)
+        mwr_comp27 = comparison(aj, aj_in, "normal")
         mwr_em27 = comparison_emoji(mwr_comp27)
+        mwr_comp_dep = comparison(dep_, 0, "deposits")
+        mwr_em_dep = comparison_emoji(mwr_comp_dep)
             
         stats_data = pd.DataFrame({
             'Stats' : ['Duration',
@@ -759,7 +752,7 @@ class basket_analysis:
                         'Last 12 Months Return', 'Stdev',
                         'CAGR', 'Annualized Volatility',
                         'Sharpe Ratio', 'Sortino Ratio', 
-                        'Average Drawworn', 'Maximum Drawdown',
+                        'Average Drawdown', 'Maximum Drawdown',
                         'Winning Pct', 'Win-Loss Ratio',
                         'Max Consecutive Positive Days',
                         'Max Consecutive Negative Days',
@@ -786,20 +779,19 @@ class basket_analysis:
                         f"{beta_in:.2f}", f"{tr_in:.2f}", f"{alpha_in*100}", f"{er_in*100:.2f}%",
                         f"{aj_in*100:.2f}"] ,
             
-            "Comparative Performance": [f"{mwr_comp1}", f"{mwr_comp1}", f"{mwr_comp1}",
-                        f"{mwr_comp2}", f"{mwr_comp4}", f"{mwr_comp18}", f"{mwr_comp20}", 
-                        f"{mwr_comp5}", f"{mwr_comp3}", f"{mwr_comp6}", f"{mwr_comp7}", 
-                        f"{mwr_comp10}", f"{mwr_comp9}", f"{mwr_comp8}", f"{mwr_comp13}", 
-                        f"{mwr_comp15}", f"{mwr_comp16}", f"{mwr_comp17}", 
-                        f"{mwr_comp23}", f"{mwr_comp24}", f"{mwr_comp25}", f"{mwr_comp26}",
-                        f"{mwr_comp27}"] ,
+            "Comparative Performance": [f"{mwr_comp1}", f"{mwr_comp1}", f"{mwr_comp_dep}", f"{mwr_comp2}", 
+                                        f"{mwr_comp4}", f"{mwr_comp18}", f"{mwr_comp19}", f"{mwr_comp5}", 
+                                        f"{mwr_comp3}", f"{mwr_comp6}", f"{mwr_comp7}", f"{mwr_comp15}", 
+                                        f"{mwr_comp10}", f"{mwr_comp9}", f"{mwr_comp8}", f"{mwr_comp13}",
+                                        f"{mwr_comp16}", f"{mwr_comp17}", f"{mwr_comp23}", f"{mwr_comp24}",
+                                        f"{mwr_comp25}", f"{mwr_comp26}",
+                                        f"{mwr_comp27}"] ,
             
-            "Sentiment Vote": [f"{mwr_em}", f"{mwr_em}", f"{mwr_em}",
-                        f"{mwr_em2}", f"{mwr_em4}", f"{mwr_em18}", f"{mwr_em20}", 
-                        f"{mwr_em5}", f"{mwr_em3}", f"{mwr_em6}", f"{mwr_em7}", 
-                        f"{mwr_em10}", f"{mwr_em9}", f"{mwr_em8}", f"{mwr_em13}", 
-                        f"{mwr_em15}", f"{mwr_em16}", f"{mwr_em17}", f"{mwr_em23}",
-                        f"{mwr_em24}", f"{mwr_em25}", f"{mwr_em26}", f"{mwr_em27}"]                                                      
+            "Sentiment Vote": [f"{mwr_em}",  f"{mwr_em}", f"{mwr_em_dep}", f"{mwr_em2}", f"{mwr_em4}", 
+                               f"{mwr_em18}", f"{mwr_em19}", f"{mwr_em5}", f"{mwr_em3}", f"{mwr_em6}", 
+                               f"{mwr_em7}", f"{mwr_em15}", f"{mwr_em10}", f"{mwr_em9}", f"{mwr_em8}", 
+                               f"{mwr_em13}", f"{mwr_em16}", f"{mwr_em17}", f"{mwr_em23}", f"{mwr_em24}", 
+                               f"{mwr_em25}", f"{mwr_em26}", f"{mwr_em27}"]                                                      
         })
         stats_data.index = stats_data.index + 1
         stats_data = stats_data.style.set_table_styles(green, axis=1)
@@ -1005,17 +997,23 @@ class basket_analysis:
                                   #  st.session_state["exit"] = True
                                 elif st.session_state["button60"] == True:
                                     st.session_state["button21"] = False
+                                    st.success(f"""You are viewing 60-Day duration MWR stats based 
+                                               on change amounts for {x} that started on {b}""")
                                     cap_data1 = cap_data.iloc[-60:]
                                     change_data1 = change_data.iloc[-60:]
                                     deposit_data1 = deposit_data.iloc[-60:]
                                     self.baskets_mwr_page(x, cap_data1, change_data1, deposit_data1)
                                 elif st.session_state["button21"] == True:
                                     st.session_state["button60"] = False
+                                    st.success(f"""You are viewing 21-Day duration MWR stats based 
+                                               on change amounts for {x} that started on {b}""")                                    
                                     cap_data2 = cap_data.iloc[-21:]
                                     change_data2 = change_data.iloc[-21:]
                                     deposit_data2 = deposit_data.iloc[-21:]
                                     self.baskets_mwr_page(x, cap_data2, change_data2, deposit_data2)                                    
                                 elif (st.session_state["button60"]!=True) and (st.session_state["button21"]!=True):
+                                    st.success(f"""You are viewing MWR stats based 
+                                               on change amounts for {x} that started on {b}""")
                                     self.baskets_mwr_page(x, cap_data, change_data, deposit_data)
                             elif locals()[f"{x}_stats1"] == 'MTM':
                                 if st.session_state.get(f"button60") != True:
@@ -1032,17 +1030,23 @@ class basket_analysis:
                                     st.warning("Click on exit button before switching between views")
                                 elif st.session_state["button60"] == True:
                                     st.session_state["button21"] = False
+                                    st.success(f"""You are viewing 60-Day duration MWR stats based 
+                                               on mtm amounts for {x} that started on {b}""")                                    
                                     cap_data3 = cap_data.iloc[-60:]
                                     mtm_data_forex3 = mtm_data_forex.iloc[-60:]
                                     deposit_data3 = deposit_data.iloc[-60:]                                
                                     self.baskets_mwr_page(x, cap_data3, mtm_data_forex3, deposit_data3)
                                 elif st.session_state["button21"] == True:
                                     st.session_state["button60"] = False
+                                    st.success(f"""You are viewing 21-Day duration MWR stats based 
+                                               on mtm amounts for {x} that started on {b}""")                                     
                                     cap_data4 = cap_data.iloc[-21:]
                                     mtm_data_forex4 = mtm_data_forex.iloc[-21:]
                                     deposit_data4 = deposit_data.iloc[-21:]   
                                     self.baskets_mwr_page(x, cap_data4, mtm_data_forex4, deposit_data4)
                                 elif (st.session_state["button60"]!=True) and (st.session_state["button21"]!=True):                                 
+                                    st.success(f"""You are viewing MWR stats based 
+                                               on mtm amounts for {x} that started on {b}""")                                     
                                     self.baskets_mwr_page(x, cap_data, mtm_data_forex, deposit_data)
                             elif locals()[f"{x}_stats1"] == 'MTM (Exc. Forex)':
                                 if st.session_state.get(f"button60") != True:
@@ -1059,17 +1063,23 @@ class basket_analysis:
                                     st.warning("Click on exit button before switching between views")
                                 elif st.session_state["button60"] == True:
                                     st.session_state["button21"] = False
+                                    st.success(f"""You are viewing 60-Day duration MWR stats based 
+                                               on mtm (exc. forex) amounts for {x} that started on {b}""")                                     
                                     cap_data5 = cap_data.iloc[-60:]
                                     mtm_data5 = mtm_data.iloc[-60:]
                                     deposit_data5 = deposit_data.iloc[-60:]
                                     self.baskets_mwr_page(x, cap_data5, mtm_data5, deposit_data5)  
                                 elif st.session_state["button21"] == True:
                                     st.session_state["button60"] = False
+                                    st.success(f"""You are viewing 21-Day duration MWR stats based 
+                                               on mtm (exc. forex) amounts for {x} that started on {b}""")                                      
                                     cap_data6 = cap_data.iloc[-21:]
                                     mtm_data6 = mtm_data.iloc[-21:]
                                     deposit_data6 = deposit_data.iloc[-21:]     
                                     self.baskets_mwr_page(x, cap_data6, mtm_data6, deposit_data6)
                                 elif (st.session_state["button60"]!=True) and (st.session_state["button21"]!=True):                                                                   
+                                    st.success(f"""You are viewing MWR stats based 
+                                               on mtm (exc. forex) amounts for {x} that started on {b}""")                                      
                                     self.baskets_mwr_page(x, cap_data, mtm_data, deposit_data)
                         elif locals()[f'{x}_stats'] == 'TWR':
                             if locals()[f"{x}_stats1"] == 'Change':
@@ -1087,17 +1097,23 @@ class basket_analysis:
                                     st.warning("Click on exit button before switching between views")
                                 elif st.session_state["button60"] == True:
                                     st.session_state["button21"] = False
+                                    st.success(f"""You are viewing 60-Day duration TWR stats based 
+                                               on change amounts for {x} that started on {b}""")                                      
                                     cap_data7 = cap_data.iloc[-60:]
                                     change_data7 = change_data.iloc[-60:]
                                     deposit_data7 = deposit_data.iloc[-60:]
                                     self.baskets_twr_page(x, cap_data7, change_data7, deposit_data7) 
                                 elif st.session_state["button21"] == True:
                                     st.session_state["button60"] = False
+                                    st.success(f"""You are viewing 21-Day duration TWR stats based 
+                                               on change amounts for {x} that started on {b}""")                                       
                                     cap_data8 = cap_data.iloc[-21:]
                                     change_data8 = change_data.iloc[-21:]
                                     deposit_data8 = deposit_data.iloc[-21:]     
                                     self.baskets_twr_page(x, cap_data8, change_data8, deposit_data8) 
                                 elif (st.session_state["button60"]!=True) and (st.session_state["button21"]!=True):                               
+                                    st.success(f"""You are viewing TWR stats based 
+                                               on change amounts for {x} that started on {b}""")                                       
                                     self.baskets_twr_page(x, cap_data, change_data, deposit_data)
                             if locals()[f"{x}_stats1"] == 'MTM':
                                 if st.session_state.get(f"button60") != True:
@@ -1114,17 +1130,23 @@ class basket_analysis:
                                     st.warning("Click on exit button before switching between views")
                                 elif st.session_state["button60"] == True:
                                     st.session_state["button21"] = False
+                                    st.success(f"""You are viewing 60-Day duration TWR stats based 
+                                               on mtm amounts for {x} that started on {b}""")                                       
                                     cap_data9 = cap_data.iloc[-60:]
                                     mtm_data_forex9 = mtm_data_forex.iloc[-60:]
                                     deposit_data9 = deposit_data.iloc[-60:]
                                     self.baskets_twr_page(x, cap_data9, mtm_data_forex9, deposit_data9) 
                                 elif st.session_state["button21"] == True:
                                     st.session_state["button60"] = False
+                                    st.success(f"""You are viewing 21-Day duration TWR stats based 
+                                               on mtm amounts for {x} that started on {b}""")                                      
                                     cap_data10 = cap_data.iloc[-21:]
                                     mtm_data_forex10 = mtm_data_forex.iloc[-21:]
                                     deposit_data10 = deposit_data.iloc[-21:]     
                                     self.baskets_twr_page(x, cap_data10, mtm_data_forex10, deposit_data10) 
                                 elif (st.session_state["button60"]!=True) and (st.session_state["button21"]!=True):                                
+                                    st.success(f"""You are viewing TWR stats based 
+                                               on mtm amounts for {x} that started on {b}""")                                      
                                     self.baskets_twr_page(x, cap_data, mtm_data_forex, deposit_data)    
                             if locals()[f"{x}_stats1"] == 'MTM (Exc. Forex)':
                                 if st.session_state.get(f"button60") != True:
@@ -1141,17 +1163,23 @@ class basket_analysis:
                                     st.warning("Click on exit button before switching between views")
                                 elif st.session_state["button60"] == True:
                                     st.session_state["button21"] = False
+                                    st.success(f"""You are viewing 60-Day duration TWR stats based 
+                                               on mtm (exc. forex) amounts for {x} that started on {b}""")                                      
                                     cap_data11 = cap_data.iloc[-60:]
                                     mtm_data11 = mtm_data.iloc[-60:]
                                     deposit_data11 = deposit_data.iloc[-60:]
                                     self.baskets_twr_page(x, cap_data11, mtm_data11, deposit_data11) 
                                 elif st.session_state["button21"] == True:
                                     st.session_state["button60"] = False
+                                    st.success(f"""You are viewing 21-Day duration TWR stats based 
+                                               on mtm (exc. forex) amounts for {x} that started on {b}""")                                      
                                     cap_data12 = cap_data.iloc[-21:]
                                     mtm_data12 = mtm_data.iloc[-21:]
                                     deposit_data12 = deposit_data.iloc[-21:]     
                                     self.baskets_twr_page(x, cap_data12, mtm_data12, deposit_data12)  
                                 elif (st.session_state["button60"]!=True) and (st.session_state["button21"]!=True):                               
+                                    st.success(f"""You are viewing TWR stats based 
+                                               on mtm (exc. forex) amounts for {x} that started on {b}""")                                      
                                     self.baskets_twr_page(x, cap_data, mtm_data, deposit_data)                                                               
                
                 
@@ -1202,6 +1230,10 @@ class basket_analysis:
                     emo = "🟢"
                 else:
                     emo = "🔴"
+                if col_mwr == "green":
+                    emo1 = "🟢"
+                else:
+                    emo1 = "🔴"                    
                 new_el = "    End Date: "    
                 a = locale.currency(a, symbol=True, grouping=True)
                 y = locale.currency(y, symbol=True, grouping=True)
@@ -1216,7 +1248,7 @@ class basket_analysis:
                 text6 = f"💰:{col_change}[Ending Value:] :{col_change}[{new_val.replace('.00', '')}]"
                 text7 = f"💰:{col_change}[PnL:] :{col_change}[{a.replace('.00', '')}]"
                 text8 = f"{emo} :{col_twr}[TWR:] :{col_twr}[{d:.2f}%]"
-                text9 = f"{emo} :{col_mwr}[MWR:] :{col_mwr}[{e*100:.2f}%]"
+                text9 = f"{emo1} :{col_mwr}[MWR:] :{col_mwr}[{e*100:.2f}%]"
                 
                 locals()[f'{x}_button'] = st.sidebar.button(r'''{0}\
                                                             {1}\
@@ -1297,7 +1329,7 @@ class basket_analysis:
                                                             
                                                            \n    Inception Date: {b}    End Date: {c}
                                                            \n    Invested Amount: {y.replace('.00','')}   {store_val}: {z.replace('.00','')}
-                                                           \n    Ending Value: {new_val.replace('.00', '')}    Change: {a.replace('.00', '')}
+                                                           \n    Ending Value: {new_val.replace('.00', '')}    PnL: {a.replace('.00', '')}
                                                            \n    TWR: {d:.2f}%        MWR: {e*100:.2f}%
                                                             ''', use_container_width=False)
                 if st.session_state.get(f'{x}') != True:

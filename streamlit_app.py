@@ -15,7 +15,7 @@ class homepage:
 
     def page_config(self):
         # Show a navigation menu for authenticated users
-        st.set_page_config(page_title='Dashboard', page_icon='🌎', layout='wide')
+        st.set_page_config(page_title='Dashboard', page_icon='🌎', layout="wide")
         # Load your image
         image = Image.open("htts_fund_logo.png")
         st.sidebar.image(image, caption="HTTS Fund", output_format="PNG")
@@ -88,62 +88,33 @@ class homepage:
             st.metric("Ranking", value=emoji, delta=rank)
             st.info("Stats For Year", icon='📌')
             st.metric("Stats For Year", value=int(self.new_dict["Stats For Year"]))
-            pnl3 = locale.currency(self.new_dict["Maximum PnL"], grouping=True, symbol=True)
-            if self.new_dict["Maximum PnL"] > 0:
-                dtp2 = self.new_dict["Maximum PnL"]
-            else:
-                dtp2 = 0   
+            pnl3 = locale.currency(self.new_dict["Maximum PnL"], grouping=True, symbol=True) 
             st.info("Maximum PnL", icon='📌')                     
-            st.metric("Maximum PnL", value=f"{pnl3}", delta=dtp2)     
-            if self.new_dict["Positive Days"] > self.new_dict["Negative Days"]:
-                dtp5 = self.new_dict["Positive Days"]
-            else:
-                dtp5 = self.new_dict["Negative Days"]
+            st.metric("Maximum PnL", value=f"{pnl3}")     
             st.info("Positive Days", icon='📌')                     
-            st.metric("Positive Days", value=f"""{self.new_dict["Positive Days"]} Days""", delta=int(dtp5))                           
+            st.metric("Positive Days", value=f"""{self.new_dict["Positive Days"]} Days""")                           
         with tcol2:
             st.info("Inception PnL", icon='📌')
             pnl = locale.currency(self.new_dict["Inception PnL"], grouping=True,
                                 symbol=True)
             pnl1 = locale.currency(self.new_dict["PnL"], grouping=True, symbol=True)
-            if self.new_dict["Inception PnL"] > 0:
-                dt1 = self.new_dict["Inception PnL"]
-            else:
-                dt1 = 0
-            st.metric("Inception PnL", value=f"{pnl}", delta=dt1)
+            st.metric("Inception PnL", value=f"{pnl}")
             st.info("PnL", icon='📌')
-            if self.new_dict["PnL"] > 0:
-                dtp = self.new_dict["PnL"]
-            else:
-                dtp = 0    
-            st.metric("PnL", value=f"{pnl1}", delta = dtp)
+            st.metric("PnL", value=f"{pnl1}")
             pnl4 = locale.currency(self.new_dict["Minimum PnL"], grouping=True, symbol=True)
-            if self.new_dict["Minimum PnL"] > 0:
-                dtp3 = self.new_dict["Minimum PnL"]
-            else:
-                dtp3 = 0   
             st.info("Minimum PnL", icon='📌')                     
-            st.metric("Minimum PnL", value=f"{pnl4}", delta=dtp3)    
+            st.metric("Minimum PnL", value=f"{pnl4}")    
             st.info("Negative Days", icon='📌')                     
-            st.metric("Negative Days", value=f"""{self.new_dict["Negative Days"]} Days""", delta=int(dtp5), 
-                        delta_color="normal")                             
+            st.metric("Negative Days", value=f"""{self.new_dict["Negative Days"]} Days""")                             
         with tcol3:
             st.info("Inception Date", icon='📌')
             st.metric("Inception Date", value=str(self.new_dict["Inception Date"].date()))
             pnl2 = locale.currency(self.new_dict["Daily PnL"], grouping=True, symbol=True)
-            if self.new_dict["Daily PnL"] > 0:
-                dtp1 = self.new_dict["Daily PnL"]
-            else:
-                dtp1 = 0   
             st.info("Daily PnL", icon='📌')                     
-            st.metric("Daily PnL", value=f"{pnl2}", delta=dtp1)
+            st.metric("Daily PnL", value=f"{pnl2}")
             pnl5 = locale.currency(self.new_dict["Stdev"], grouping=True, symbol=True)
-            if self.new_dict["Stdev"] > 0:
-                dtp4 = self.new_dict["Stdev"]
-            else:
-                dtp4 = 0   
             st.info("Stdev", icon='📌')                     
-            st.metric("Stdev", value=f"{pnl5}", delta=dtp4)        
+            st.metric("Stdev", value=f"{pnl5}")        
         
     def template(self):
         locale.setlocale(locale.LC_ALL, 'en_US')

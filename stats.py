@@ -3,7 +3,7 @@ import pandas as pd
 from datetime import timedelta, date
 import numpy as np
 
-def color_code(col1, col2=0):
+def color_code(col1 : pd.Series, col2=0):
     if col1 >= col2:
         return "green"
     else:
@@ -21,28 +21,50 @@ def color_kwargs(col1):
     else:
         return "color: green"
 
-def comparison(basket_stat, index_stat):
+def comparison(basket_stat, index_stat, nature):
     if basket_stat>index_stat:
-        pf = "Outperformed"
+        if nature == "normal":
+            pf = "Outperformed"
+        elif nature == "risk":
+            pf = "Riskier"
+        elif nature == "performance":
+            pf = "Higher Expected Return"
+        elif nature == "deposits":
+            pf = "Additional Deposits"
     elif basket_stat<index_stat:
-        pf = "Underperformed"
+        if nature == "normal":
+            pf = "Underperformed"
+        elif nature == "risk":
+            pf = "Less Risky"
+        elif nature == "performance":
+            pf = "Lower Expected Return"
+        elif nature == "deposits":
+            pf = "Withdrawals"
     else:
         pf = "Equalled"
     return pf
 
-def comparison_alt(basket_stat, index_stat):
+def comparison_alt(basket_stat, index_stat, nature):
     if basket_stat<index_stat:
-        pf = "Outperformed"
+        if nature == "normal":
+            pf = "Outperformed"
+        elif nature == "risk":
+            pf = "Riskier"
     elif basket_stat>index_stat:
-        pf = "Underperformed"
+        if nature == "normal":
+            pf = "Underperformed"
+        elif nature == "risk":
+            pf = "Less Risky"
     else:
         pf = "Equalled"
     return pf
 
 def comparison_emoji(sentiment):
-    if sentiment in ("Equalled", "Outperformed"):
+    if sentiment in ("Equalled", "Outperformed", "Higher Expected Return", 
+                     "Less Risky", "Additional Deposits"):
         emoji = "👍"
-    elif sentiment in ("Underperformed"):
+    elif sentiment in ("Underperformed", "Riskier", "Lower Expected Return",
+                       "Withdrawals"):
         emoji = "👎"
     return emoji
 
@@ -172,6 +194,9 @@ def stdev(dataframe: pd.DataFrame, col: str) -> float:
     return std
 
 def mu(dataframe: pd.DataFrame, col: str) -> float:
+    '''
+    mean returns
+    '''
     mu1 = dataframe[col].mean()
     return mu1
 

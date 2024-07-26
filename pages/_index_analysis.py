@@ -384,7 +384,7 @@ class app:
         
 
         if stats=="MWR":
-            st.success("MWR")
+            st.success("You are viewing MWR stats")
             placeholder = st.empty()
             self.duration_widgets()  
             def default():
@@ -606,7 +606,7 @@ class app:
                 
 
         elif stats=="TWR":
-            st.success("TWR")
+            st.success("You are viewing TWR stats")
             self.duration_widgets()  
             def default_twr():
                 start_date = self.placeholder.date_input('Start Date', self.data.index[0].date(), 
