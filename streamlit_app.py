@@ -8,6 +8,7 @@ import time
 import pandas as pd
 from stats import date_range, win_days, loss_days, duration
 import locale
+from streamlit_option_menu import option_menu
 
 class homepage:
     def __init__(self):
@@ -15,7 +16,8 @@ class homepage:
 
     def page_config(self):
         # Show a navigation menu for authenticated users
-        st.set_page_config(page_title='Dashboard', page_icon='🌎', layout="wide")
+        st.set_page_config(page_title='Dashboard', page_icon='🌎', layout="wide",
+                           initial_sidebar_state="expanded")
         # Load your image
         image = Image.open("htts_fund_logo.png")
         st.sidebar.image(image, caption="HTTS Fund", output_format="PNG")
@@ -23,6 +25,10 @@ class homepage:
         st.sidebar.write(r"🔗:blue-background[:blue[$$Navigation$$ $\>$ $$Pane$$]]")
         st.sidebar.page_link("pages/baskets_analysis.py", label=r":blue-background[:blue[$$Compare$$ $\>$ $$your$$ $\>$ $$baskets$$ $\>$ $$with$$ $\>$ $$SnP$$]]",icon="🔗")
         st.sidebar.page_link("pages/_index_analysis.py", label=r":blue-background[:blue[$$SnP$$ $\>$ $$Analysis$$]]",icon="🔗")
+        with st.sidebar:
+            selected = option_menu("Get Help", ["Email: Akriti.Kakkar@httsfund.com"],
+                                   orientation="horizontal")
+            selected
         st.markdown("""
         <style> section[data-testid="stSidebar"] { width: 400px !important; }
         </style>

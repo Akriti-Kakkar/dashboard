@@ -24,7 +24,7 @@ class basket_analysis:
     
     @staticmethod
     def page_config() -> None:
-        st.set_page_config(page_title='Dashboard', page_icon='🌎')
+        st.set_page_config(page_title='Dashboard', page_icon='🌎', initial_sidebar_state="expanded")
         st.sidebar.image('htts_fund_logo.png', caption='HTTS Fund')
         #st.subheader('📈 Baskets Vs S&P Analysis')
         # Inject custom CSS to set the width of the sidebar
@@ -263,7 +263,7 @@ class basket_analysis:
                 iv1 = locale.currency(iv, symbol=True, grouping=True)
                 st.metric('Invested Value (Static)', value=iv1)         
                 st.write('S&P: -')
-                st.warning('👍 Investment in inception/day1')                
+                st.warning('👍 Investments over the horizon')                
             except:                         
                 st.metric('Invested Value (Static)', value=np.nan)                              
             st.info('Positive Days', icon='📌')
