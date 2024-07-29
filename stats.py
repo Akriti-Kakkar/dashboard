@@ -28,7 +28,7 @@ def comparison(basket_stat, index_stat, nature):
         elif nature == "risk":
             pf = "Riskier"
         elif nature == "performance":
-            pf = "Higher Expected Return"
+            pf = "Higher Hurdle Rate"
         elif nature == "deposits":
             pf = "Additional Deposits"
     elif basket_stat<index_stat:
@@ -37,7 +37,7 @@ def comparison(basket_stat, index_stat, nature):
         elif nature == "risk":
             pf = "Less Risky"
         elif nature == "performance":
-            pf = "Lower Expected Return"
+            pf = "Lower Hurdle Rate"
         elif nature == "deposits":
             pf = "Withdrawals"
     else:
@@ -60,10 +60,10 @@ def comparison_alt(basket_stat, index_stat, nature):
     return pf
 
 def comparison_emoji(sentiment):
-    if sentiment in ("Equalled", "Outperformed", "Higher Expected Return", 
+    if sentiment in ("Equalled", "Outperformed", "Higher Hurdle Rate", 
                      "Less Risky", "Additional Deposits"):
         emoji = "👍"
-    elif sentiment in ("Underperformed", "Riskier", "Lower Expected Return",
+    elif sentiment in ("Underperformed", "Riskier", "Lower Hurdle Rate",
                        "Withdrawals"):
         emoji = "👎"
     return emoji

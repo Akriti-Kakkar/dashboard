@@ -25,10 +25,7 @@ class homepage:
         st.sidebar.write(r"🔗:blue-background[:blue[$$Navigation$$ $\>$ $$Pane$$]]")
         st.sidebar.page_link("pages/baskets_analysis.py", label=r":blue-background[:blue[$$Compare$$ $\>$ $$your$$ $\>$ $$baskets$$ $\>$ $$with$$ $\>$ $$SnP$$]]",icon="🔗")
         st.sidebar.page_link("pages/_index_analysis.py", label=r":blue-background[:blue[$$SnP$$ $\>$ $$Analysis$$]]",icon="🔗")
-        with st.sidebar:
-            selected = option_menu("Get Help", ["Email: Akriti.Kakkar@httsfund.com"],
-                                   orientation="horizontal")
-            selected
+        st.sidebar.markdown('<a href="Akriti.Kakkar@httsfund.com">Email: Akriti.Kakkar@httsfund.com</a>', unsafe_allow_html=True)
         st.markdown("""
         <style> section[data-testid="stSidebar"] { width: 400px !important; }
         </style>

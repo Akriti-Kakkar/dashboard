@@ -766,8 +766,8 @@ class basket_analysis:
                         f"{ret*100:,.2f}%", f"{ann_vol*100:,.2f}%", f"{shp:,.2f}",
                         f"{sort1:,.2f}", f"{ad*100:,.2f}%", f"{mdd*100:,.2f}%", f"{wn*100:,.2f}%",
                         f"{wl:,.2f}", max_cons_pos, max_cons_neg, f"{beta_st:.2f}",
-                        f"{tr:.2f}", f"{alpha_st*100:.2f}", f"{er*100:.2f}%",
-                        f"{aj*100:.2f}"],
+                        f"{tr:.2f}", f"{alpha_st*100:.2f}%", f"{er*100:.2f}%",
+                        f"{aj:.2f}"],
             
             "S&P": [f"{active} Days", f"${allocation:,.2f}", f"${0:,.2f}", 
                         f"${end_all_ind:,.2f}", f"{mn_ret_ind*100:,.2f}%",
@@ -776,8 +776,8 @@ class basket_analysis:
                         f"{ret_ind*100:,.2f}%", f"{ann_vol_ind*100:,.2f}%", f"{shp_ind:,.2f}",
                         f"{sort1_ind:,.2f}", f"{ad_ind*100:,.2f}%", f"{mdd_ind*100:,.2f}%", 
                         f"{wn_ind*100:,.2f}%", f"{wl_ind:,.2f}", max_cons_pos_ind, max_cons_neg_ind,
-                        f"{beta_in:.2f}", f"{tr_in:.2f}", f"{alpha_in*100}", f"{er_in*100:.2f}%",
-                        f"{aj_in*100:.2f}"] ,
+                        f"{beta_in:.2f}", f"{tr_in:.2f}", f"{alpha_in*100}%", f"{er_in*100:.2f}%",
+                        f"{aj_in:.2f}"] ,
             
             "Comparative Performance": [f"{mwr_comp1}", f"{mwr_comp1}", f"{mwr_comp_dep}", f"{mwr_comp2}", 
                                         f"{mwr_comp4}", f"{mwr_comp18}", f"{mwr_comp19}", f"{mwr_comp5}", 

@@ -1,3 +1,4 @@
+calculation of required return
 set virtual environment and run python file:
 1. python -m venv .venv
 2. Set-ExecutionPolicy Unrestricted -Scope Process
