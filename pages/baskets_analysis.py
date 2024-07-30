@@ -957,7 +957,7 @@ class basket_analysis:
                                                           horizontal=True,
                                                             help='''
                                                             Money Weighted Returns (Modified Dietz Method): 
-                                                            Ending Value - Initial - Cash Flow/Initial Value + Weighted Cash Flow
+                                                            Ending Value - Initial Value - Cash Flow/Initial Value + Weighted Cash Flow
                                                             
                                                             Time Weighted Returns (Compounded Returns):
                                                             [(1 + RN) * (1 + RN) * ... -1] * 100

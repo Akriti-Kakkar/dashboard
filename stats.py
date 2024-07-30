@@ -3,7 +3,7 @@ import pandas as pd
 from datetime import timedelta, date
 import numpy as np
 
-def color_code(col1 : pd.Series, col2=0):
+def color_code(col1, col2=0):
     if col1 >= col2:
         return "green"
     else:
