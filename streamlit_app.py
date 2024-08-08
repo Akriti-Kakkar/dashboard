@@ -133,6 +133,7 @@ class homepage:
                 div[data-testid="stVerticalBlock"] {
                     max-height: 1000px;
                     overflow-y: auto;
+                    overflow-x: auto;
                 }
                 </style>
                 """,
