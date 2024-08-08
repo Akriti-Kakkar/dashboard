@@ -123,10 +123,21 @@ class homepage:
         locale.setlocale(locale.LC_ALL, 'en_US')
         locale.override_localeconv = {'n_sign_posn':1}
         tab1, tab2, tab3, tab4, tab5 = st.tabs(self.sort_baskets_lst1)
-        with tab1:
-            with st.container(height=1000):
-                tcol1, tcol2, tcol3 = st.columns(3)
-                self.inner_tab(0, "⭐⭐⭐⭐⭐", 1, tcol1, tcol2, tcol3)  
+        with tab1:           
+            tcol1, tcol2, tcol3 = st.columns(3)
+            self.inner_tab(0, "⭐⭐⭐⭐⭐", 1, tcol1, tcol2, tcol3)  
+            # Make columns scrollable by setting a fixed height
+            st.markdown(
+                """
+                <style>
+                div[data-testid="stVerticalBlock"] {
+                    max-height: 1000px;
+                    overflow-y: auto;
+                }
+                </style>
+                """,
+                unsafe_allow_html=True
+            )
         with tab2:
             tcol4, tcol5, tcol6 = st.columns(3)
             self.inner_tab(1, "⭐⭐⭐⭐", 2, tcol4, tcol5, tcol6)
