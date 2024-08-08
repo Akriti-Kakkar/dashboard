@@ -131,7 +131,6 @@ class homepage:
                 """
                 <style>
                 div[data-testid="stVerticalBlock"] {
-                    max-width: 100px;
                     max-height: 1000px;
                     overflow-y: auto;
                     overflow-x: auto;
