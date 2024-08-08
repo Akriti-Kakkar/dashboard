@@ -87,57 +87,58 @@ class homepage:
     def inner_tab(self, basket, emoji, rank, tcol1, tcol2, tcol3):
         self.stats(basket=basket)
         with tcol1:
-            st.info("Ranking")
-            st.metric("Ranking", value=emoji, delta=rank)
-            st.info("Stats For Year", icon='📌')
-            st.metric("Stats For Year", value=int(self.new_dict["Stats For Year"]))
+            st.info("YTD Ranking")
+            st.metric("YTD Ranking", value=emoji, delta=rank)
+            st.info("Stats For The Year", icon='📌')
+            st.metric("Stats For The Year", value=int(self.new_dict["Stats For Year"]))
             pnl3 = locale.currency(self.new_dict["Maximum PnL"], grouping=True, symbol=True) 
-            st.info("Maximum PnL", icon='📌')                     
-            st.metric("Maximum PnL", value=f"{pnl3}")     
-            st.info("Positive Days", icon='📌')                     
-            st.metric("Positive Days", value=f"""{self.new_dict["Positive Days"]} Days""")                           
+            st.info("Maximum Daily PnL (YTD)", icon='📌')                     
+            st.metric("Maximum Daily PnL (YTD)", value=f"{pnl3}")     
+            st.info("Positive Days (YTD)", icon='📌')                     
+            st.metric("Positive Days (YTD)", value=f"""{self.new_dict["Positive Days"]} Days""")                           
         with tcol2:
             st.info("Inception PnL", icon='📌')
             pnl = locale.currency(self.new_dict["Inception PnL"], grouping=True,
                                 symbol=True)
             pnl1 = locale.currency(self.new_dict["PnL"], grouping=True, symbol=True)
             st.metric("Inception PnL", value=f"{pnl}")
-            st.info("PnL", icon='📌')
-            st.metric("PnL", value=f"{pnl1}")
+            st.info("YTD PnL", icon='📌')
+            st.metric("YTD PnL", value=f"{pnl1}")
             pnl4 = locale.currency(self.new_dict["Minimum PnL"], grouping=True, symbol=True)
-            st.info("Minimum PnL", icon='📌')                     
-            st.metric("Minimum PnL", value=f"{pnl4}")    
-            st.info("Negative Days", icon='📌')                     
-            st.metric("Negative Days", value=f"""{self.new_dict["Negative Days"]} Days""")                             
+            st.info("Minimum Daily PnL (YTD)", icon='📌')                     
+            st.metric("Minimum Daily PnL (YTD)", value=f"{pnl4}")    
+            st.info("Negative Days (YTD)", icon='📌')                     
+            st.metric("Negative Days (YTD)", value=f"""{self.new_dict["Negative Days"]} Days""")                             
         with tcol3:
             st.info("Inception Date", icon='📌')
             st.metric("Inception Date", value=str(self.new_dict["Inception Date"].date()))
             pnl2 = locale.currency(self.new_dict["Daily PnL"], grouping=True, symbol=True)
-            st.info("Daily PnL", icon='📌')                     
-            st.metric("Daily PnL", value=f"{pnl2}")
+            st.info("Daily PnL (YTD)", icon='📌')                     
+            st.metric("Daily PnL (YTD)", value=f"{pnl2}")
             pnl5 = locale.currency(self.new_dict["Stdev"], grouping=True, symbol=True)
-            st.info("Stdev", icon='📌')                     
-            st.metric("Stdev", value=f"{pnl5}")        
+            st.info("Daily Stdev (YTD)", icon='📌')                     
+            st.metric("Daily Stdev (YTD)", value=f"{pnl5}")        
         
     def template(self):
         locale.setlocale(locale.LC_ALL, 'en_US')
         locale.override_localeconv = {'n_sign_posn':1}
         tab1, tab2, tab3, tab4, tab5 = st.tabs(self.sort_baskets_lst1)
-        with tab1:
-            tcol1, tcol2, tcol3 = st.columns(3)
-            self.inner_tab(0, "⭐⭐⭐⭐⭐", 1, tcol1, tcol2, tcol3)       
-        with tab2:
-            tcol4, tcol5, tcol6 = st.columns(3)
-            self.inner_tab(1, "⭐⭐⭐⭐", 2, tcol4, tcol5, tcol6)
-        with tab3:
-            tcol7, tcol8, tcol9 = st.columns(3)
-            self.inner_tab(2, "⭐⭐⭐", 3, tcol7, tcol8, tcol9)   
-        with tab4:
-            tcol10, tcol11, tcol12 = st.columns(3)
-            self.inner_tab(3, "⭐⭐", 4, tcol10, tcol11, tcol12)
-        with tab5:
-            tcol13, tcol14, tcol15 = st.columns(3)
-            self.inner_tab(4, "⭐", 5, tcol13, tcol14, tcol15)                                           
+        with st.container():
+            with tab1:
+                tcol1, tcol2, tcol3 = st.columns(3)
+                self.inner_tab(0, "⭐⭐⭐⭐⭐", 1, tcol1, tcol2, tcol3)       
+            with tab2:
+                tcol4, tcol5, tcol6 = st.columns(3)
+                self.inner_tab(1, "⭐⭐⭐⭐", 2, tcol4, tcol5, tcol6)
+            with tab3:
+                tcol7, tcol8, tcol9 = st.columns(3)
+                self.inner_tab(2, "⭐⭐⭐", 3, tcol7, tcol8, tcol9)   
+            with tab4:
+                tcol10, tcol11, tcol12 = st.columns(3)
+                self.inner_tab(3, "⭐⭐", 4, tcol10, tcol11, tcol12)
+            with tab5:
+                tcol13, tcol14, tcol15 = st.columns(3)
+                self.inner_tab(4, "⭐", 5, tcol13, tcol14, tcol15)                                           
                                                
                 
 
