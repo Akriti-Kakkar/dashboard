@@ -87,7 +87,7 @@ class homepage:
     def inner_tab(self, basket, emoji, rank, tcol1, tcol2, tcol3):
         self.stats(basket=basket)
         with tcol1:
-            st.info("YTD Ranking")
+            st.info("YTD Ranking", icon='📌')
             st.metric("YTD Ranking", value=emoji, delta=rank)
             st.info("Stats For The Year", icon='📌')
             st.metric("Stats For The Year", value=int(self.new_dict["Stats For Year"]))
@@ -131,6 +131,7 @@ class homepage:
                 """
                 <style>
                 div[data-testid="stVerticalBlock"] {
+                    max-width: 100px;
                     max-height: 1000px;
                     overflow-y: auto;
                     overflow-x: auto;
