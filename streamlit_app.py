@@ -126,7 +126,8 @@ class homepage:
         with st.container():
             with tab1:
                 tcol1, tcol2, tcol3 = st.columns(3)
-                self.inner_tab(0, "⭐⭐⭐⭐⭐", 1, tcol1, tcol2, tcol3)       
+                with st.container():
+                    self.inner_tab(0, "⭐⭐⭐⭐⭐", 1, tcol1, tcol2, tcol3)  
             with tab2:
                 tcol4, tcol5, tcol6 = st.columns(3)
                 self.inner_tab(1, "⭐⭐⭐⭐", 2, tcol4, tcol5, tcol6)
