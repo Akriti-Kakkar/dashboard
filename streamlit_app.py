@@ -123,23 +123,22 @@ class homepage:
         locale.setlocale(locale.LC_ALL, 'en_US')
         locale.override_localeconv = {'n_sign_posn':1}
         tab1, tab2, tab3, tab4, tab5 = st.tabs(self.sort_baskets_lst1)
-        with st.container():
-            with tab1:
+        with tab1:
+            with st.container(height=1000):
                 tcol1, tcol2, tcol3 = st.columns(3)
-                with st.container():
-                    self.inner_tab(0, "⭐⭐⭐⭐⭐", 1, tcol1, tcol2, tcol3)  
-            with tab2:
-                tcol4, tcol5, tcol6 = st.columns(3)
-                self.inner_tab(1, "⭐⭐⭐⭐", 2, tcol4, tcol5, tcol6)
-            with tab3:
-                tcol7, tcol8, tcol9 = st.columns(3)
-                self.inner_tab(2, "⭐⭐⭐", 3, tcol7, tcol8, tcol9)   
-            with tab4:
-                tcol10, tcol11, tcol12 = st.columns(3)
-                self.inner_tab(3, "⭐⭐", 4, tcol10, tcol11, tcol12)
-            with tab5:
-                tcol13, tcol14, tcol15 = st.columns(3)
-                self.inner_tab(4, "⭐", 5, tcol13, tcol14, tcol15)                                           
+                self.inner_tab(0, "⭐⭐⭐⭐⭐", 1, tcol1, tcol2, tcol3)  
+        with tab2:
+            tcol4, tcol5, tcol6 = st.columns(3)
+            self.inner_tab(1, "⭐⭐⭐⭐", 2, tcol4, tcol5, tcol6)
+        with tab3:
+            tcol7, tcol8, tcol9 = st.columns(3)
+            self.inner_tab(2, "⭐⭐⭐", 3, tcol7, tcol8, tcol9)   
+        with tab4:
+            tcol10, tcol11, tcol12 = st.columns(3)
+            self.inner_tab(3, "⭐⭐", 4, tcol10, tcol11, tcol12)
+        with tab5:
+            tcol13, tcol14, tcol15 = st.columns(3)
+            self.inner_tab(4, "⭐", 5, tcol13, tcol14, tcol15)                                           
                                                
                 
 
