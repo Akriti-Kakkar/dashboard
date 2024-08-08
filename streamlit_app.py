@@ -16,7 +16,7 @@ class homepage:
 
     def page_config(self):
         # Show a navigation menu for authenticated users
-        st.set_page_config(page_title='Dashboard', page_icon='🌎', layout="centered",
+        st.set_page_config(page_title='Dashboard', page_icon='🌎', layout="wide",
                            initial_sidebar_state="expanded")
         # Load your image
         image = Image.open("htts_fund_logo.png")
