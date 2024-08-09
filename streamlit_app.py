@@ -132,21 +132,6 @@ class homepage:
         with tab1:           
             tcol1, tcol2, tcol3 = st.columns(3)
             self.inner_tab(0, "⭐⭐⭐⭐⭐", 1, tcol1, tcol2, tcol3)  
-            # Make columns scrollable by setting a fixed height
-            st.markdown(
-                """
-                <style>
-                @media (max-width: 600px) {
-                    .css-1lcbmhc {
-                        flex-direction: row !important;
-                        flex-wrap: nowrap !important;
-                        overflow-x: auto !important;
-                    }
-                }
-                </style>
-                """,
-                unsafe_allow_html=True
-            )
         with tab2:
             tcol4, tcol5, tcol6 = st.columns(3)
             self.inner_tab(1, "⭐⭐⭐⭐", 2, tcol4, tcol5, tcol6)
@@ -160,7 +145,21 @@ class homepage:
             tcol13, tcol14, tcol15 = st.columns(3)
             self.inner_tab(4, "⭐", 5, tcol13, tcol14, tcol15)                                           
                                                
-                
+                    # Make columns scrollable by setting a fixed height
+        st.markdown(
+            """
+            <style>
+            @media (max-width: 600px) {
+                .css-1lcbmhc {
+                    flex-direction: row !important;
+                    flex-wrap: nowrap !important;
+                    overflow-x: auto !important;
+                }
+            }
+            </style>
+            """,
+            unsafe_allow_html=True
+        )        
 
             
             
