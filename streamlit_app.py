@@ -154,7 +154,7 @@ class homepage:
         st.markdown('<div class="scrollable-container">', unsafe_allow_html=True)
         with tab1:
             tcol1, tcol2, tcol3 = st.columns(3)
-            st.column_config.Column("column", width="small", disabled=False, required=True, help="column")
+            st.column_config.Column(width="large")
             self.inner_tab(0, "⭐⭐⭐⭐⭐", 1, tcol1, tcol2, tcol3)  
         with tab2:
             tcol4, tcol5, tcol6 = st.columns(3)
