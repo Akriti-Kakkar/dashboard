@@ -130,7 +130,7 @@ class homepage:
         locale.override_localeconv = {'n_sign_posn':1}
         tab1, tab2, tab3, tab4, tab5 = st.tabs(self.sort_baskets_lst1)
         with tab1:           
-            tcol1, tcol2, tcol3 = st.columns(3)
+            tcol1, tcol2, tcol3 = st.columns([10,10,10])
             self.inner_tab(0, "⭐⭐⭐⭐⭐", 1, tcol1, tcol2, tcol3)  
         with tab2:
             tcol4, tcol5, tcol6 = st.columns(3)
