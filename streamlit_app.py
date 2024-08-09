@@ -129,8 +129,19 @@ class homepage:
         locale.setlocale(locale.LC_ALL, 'en_US')
         locale.override_localeconv = {'n_sign_posn':1}
         tab1, tab2, tab3, tab4, tab5 = st.tabs(self.sort_baskets_lst1)
+        st.markdown(
+            """
+            <style>
+            .css-1lcbmhc {
+                flex: 1 1 33.3333%;
+                max-width: 33.3333%;
+            }
+            </style>
+            """,
+            unsafe_allow_html=True
+        )
         with tab1:           
-            tcol1, tcol2, tcol3 = st.columns([10,10,10])
+            tcol1, tcol2, tcol3 = st.columns(3)
             self.inner_tab(0, "⭐⭐⭐⭐⭐", 1, tcol1, tcol2, tcol3)  
         with tab2:
             tcol4, tcol5, tcol6 = st.columns(3)
