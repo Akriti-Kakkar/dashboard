@@ -129,17 +129,27 @@ class homepage:
         locale.setlocale(locale.LC_ALL, 'en_US')
         locale.override_localeconv = {'n_sign_posn':1}
         tab1, tab2, tab3, tab4, tab5 = st.tabs(self.sort_baskets_lst1)
+
+        # Custom CSS for scrollable grid layout
         st.markdown(
             """
             <style>
-            .css-1lcbmhc {
-                flex: 1 1 33.3333%;
+            .scrollable-container {
+                display: flex;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+            .scrollable-container > div {
+                flex: 0 0 33.3333%;
                 max-width: 33.3333%;
+                box-sizing: border-box;
+                padding: 10px;
             }
             </style>
             """,
             unsafe_allow_html=True
         )
+        st.markdown('<div class="scrollable-container">', unsafe_allow_html=True)
         with tab1:           
             tcol1, tcol2, tcol3 = st.columns(3)
             self.inner_tab(0, "⭐⭐⭐⭐⭐", 1, tcol1, tcol2, tcol3)  
@@ -157,21 +167,6 @@ class homepage:
             self.inner_tab(4, "⭐", 5, tcol13, tcol14, tcol15)                                           
                                                
                     # Make columns scrollable by setting a fixed height
-        st.markdown(
-            """
-            <style>
-            @media (max-width: 600px) {
-                .css-1lcbmhc {
-                    flex-direction: row !important;
-                    flex-wrap: nowrap !important;
-                    overflow-x: auto !important;
-                }
-            }
-            </style>
-            """,
-            unsafe_allow_html=True
-        )        
-
             
             
 
