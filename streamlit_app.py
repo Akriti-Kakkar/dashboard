@@ -9,6 +9,12 @@ import pandas as pd
 from stats import date_range, win_days, loss_days, duration
 import locale
 from streamlit_option_menu import option_menu
+import streamlit_theme
+import streamlit_extras
+import streamlit_toggle
+import streamlit_vertical_slider
+import streamlit.components
+import streamlit.commands
 
 class homepage:
     def __init__(self):
@@ -130,10 +136,12 @@ class homepage:
             st.markdown(
                 """
                 <style>
-                div[data-testid="stVerticalBlock"] {
-                    max-height: 1000px;
-                    overflow-y: auto;
-                    overflow-x: auto;
+                @media (max-width: 600px) {
+                    .css-1lcbmhc {
+                        flex-direction: row !important;
+                        flex-wrap: nowrap !important;
+                        overflow-x: auto !important;
+                    }
                 }
                 </style>
                 """,
