@@ -136,7 +136,8 @@ class homepage:
             <style>
             .scrollable-container {
                 display: flex;
-                overflow-x: auto;
+                overflow-x: scroll;
+                overflow-y: scroll;
                 white-space: nowrap;
             }
             .scrollable-container > div {
@@ -144,14 +145,19 @@ class homepage:
                 max-width: 33.3333%;
                 box-sizing: border-box;
                 padding: 10px;
+                display: inline;
             }
             </style>
             """,
             unsafe_allow_html=True
         )
-        st.markdown('<div class="scrollable-container">', unsafe_allow_html=True)
-        with tab1:           
+        tab1.markdown('<div class="scrollable-container">', unsafe_allow_html=True)
+        with tab1:
+            st.markdown('<div class="scrollable-container">', unsafe_allow_html=True)         
             tcol1, tcol2, tcol3 = st.columns(3)
+            tcol1.markdown('<div class="scrollable-container">', unsafe_allow_html=True)
+            tcol2.markdown('<div class="scrollable-container">', unsafe_allow_html=True)
+            tcol3.markdown('<div class="scrollable-container">', unsafe_allow_html=True)
             self.inner_tab(0, "⭐⭐⭐⭐⭐", 1, tcol1, tcol2, tcol3)  
         with tab2:
             tcol4, tcol5, tcol6 = st.columns(3)
