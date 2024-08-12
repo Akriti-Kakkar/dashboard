@@ -17,15 +17,21 @@ html_code = """
 <div style="display: flex; justify-content: space-around;">
     <div style="text-align: center;">
         <h2>Metric 1</h2>
-        <p>Value 1</p>
+        <p>1000000</p>
+        <h2>Metric 4</h2>
+        <p>40%</p>        
     </div>
     <div style="text-align: center;">
         <h2>Metric 2</h2>
-        <p>Value 2</p>
+        <p>1000000</p>
+        <h2>Metric 5</h2>
+        <p>1000%</p>        
     </div>
     <div style="text-align: center;">
         <h2>Metric 3</h2>
-        <p>Value 3</p>
+        <p>100000000000</p>
+        <h2>Metric 6</h2>
+        <p>60 Days</p>        
     </div>
 </div>
 """
