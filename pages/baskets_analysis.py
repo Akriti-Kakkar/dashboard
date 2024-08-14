@@ -231,6 +231,7 @@ class basket_analysis:
                         pd.Series(cap_data.loc[ind_, basket])
                     )
                 ind_ret1 = ind_data.loc[ind_, 'mwr']
+                print('ind_ret:', ind_ret1)
                 mwr = last_n_mwr(wt_cash, 
                                  pd.Series(ch.loc[ind_, basket]), 
                                  capital)
