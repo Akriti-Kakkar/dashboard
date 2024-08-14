@@ -5,6 +5,9 @@ set virtual environment and run python file:
 3. .venv\Scripts\activate
 4. python app.py
 
+
+# include try except for drawdown fig in twrin s&p (already added in baskets analysis)
+
 # use popover for each basket
 
 [theme]

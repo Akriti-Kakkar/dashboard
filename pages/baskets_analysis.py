@@ -814,27 +814,40 @@ class basket_analysis:
         dd_ind = pd.DataFrame(dd_ind*100)
         dd_ind = dd_ind.rename(columns = {'ec': 'Drawdown'})
         dd_ind = dd_ind[dd_ind['Drawdown']!=0]
-        fig = px.histogram(dd, y = ['Drawdown', 'S&P Returns'], x = dd.index,
-                        template='ggplot2', histfunc='avg')
+        try:
+            fig = px.histogram(dd, y = ['Drawdown', 'S&P Returns'], x = dd.index,
+                            template='ggplot2', histfunc='avg')
 
-        fig.update_layout(plot_bgcolor="#FFFFFF", 
-                            yaxis_title="Drawdown (%)",
-                            xaxis_title="Date",
-                            title="Average Of Daily Drawdown Vs Average Of Daily S&P Returns")  
-        fig.update_xaxes(linecolor='red', showgrid=False, rangeslider_visible=True,
-                                            rangeselector=dict(
-                buttons=list([
-                    dict(count=1, label="1m", step="month", stepmode="backward"),
-                    dict(count=6, label="6m", step="month", stepmode="backward"),
-                    dict(count=1, label="YTD", step="year", stepmode="todate"),
-                    dict(count=1, label="1y", step="year", stepmode="backward"),
-                    dict(step="all")
-                ])
-            ))
-        fig.update_yaxes(linecolor='blue', showgrid=False)  
-        fig.update_traces(xbins_size="M1")
-        fig.update_xaxes(showgrid=True, ticklabelmode="period", dtick="M1", tickformat="%b\n%Y")
-        fig.update_layout(bargap=0.1)              
+            fig.update_layout(plot_bgcolor="#FFFFFF", 
+                                yaxis_title="Drawdown (%)",
+                                xaxis_title="Date",
+                                title="Average Of Daily Drawdown Vs Average Of Daily S&P Returns")  
+            fig.update_xaxes(linecolor='red', showgrid=False, rangeslider_visible=True,
+                                                rangeselector=dict(
+                    buttons=list([
+                        dict(count=1, label="1m", step="month", stepmode="backward"),
+                        dict(count=6, label="6m", step="month", stepmode="backward"),
+                        dict(count=1, label="YTD", step="year", stepmode="todate"),
+                        dict(count=1, label="1y", step="year", stepmode="backward"),
+                        dict(step="all")
+                    ])
+                ))
+            fig.update_yaxes(linecolor='blue', showgrid=False)  
+            fig.update_traces(xbins_size="M1")
+            fig.update_xaxes(showgrid=True, ticklabelmode="period", dtick="M1", tickformat="%b\n%Y")
+            fig.update_layout(bargap=0.1)  
+        except ValueError:
+            dd = dd.fillna(0)
+            fig = px.histogram(dd, template='ggplot2', histfunc='avg')
+            fig.update_layout(plot_bgcolor="#FFFFFF", 
+                                yaxis_title="Drawdown (%)",
+                                xaxis_title="Date",
+                                title="Average Of Daily Drawdown Vs Average Of Daily S&P Returns")             
+            fig.update_yaxes(linecolor='blue', showgrid=False)  
+            fig.update_traces(xbins_size="M1")
+            fig.update_xaxes(showgrid=True, ticklabelmode="period", dtick="M1", tickformat="%b\n%Y")
+            fig.update_layout(bargap=0.1)             
+                  
         mwr_placeholder1.plotly_chart(fig)              
         stats_data_payoff = pd.DataFrame({'Sharpe Ratio': [shp, shp_ind],
                                             'Sortino Ratio': [sort1, sort1_ind]}, 
