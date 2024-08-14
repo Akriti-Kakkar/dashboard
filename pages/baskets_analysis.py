@@ -817,8 +817,8 @@ class basket_analysis:
                         template='ggplot2', histfunc='avg')
 
         fig.update_layout(plot_bgcolor="#FFFFFF", 
-                            xaxis_title="Drawdown (%)",
-                            yaxis_title="Date",
+                            yaxis_title="Drawdown (%)",
+                            xaxis_title="Date",
                             title="Average Of Daily Drawdown Vs Average Of Daily S&P Returns")  
         fig.update_xaxes(linecolor='red', showgrid=False, rangeslider_visible=True,
                                             rangeselector=dict(
@@ -851,8 +851,8 @@ class basket_analysis:
         fig = px.histogram(ret_twr_data, y = 'roll_sharpe', x = ret_twr_data.index,
                         template='ggplot2', histfunc='avg')
         fig.update_layout(plot_bgcolor="#FFFFFF", 
-                            xaxis_title="Sharpe Ratio",
-                            yaxis_title="Date",
+                            yaxis_title="Sharpe Ratio",
+                            xaxis_title="Date",
                             title="Average Of Daily 5-Day Rolling Sharpe Ratio")  
         fig.update_xaxes(linecolor='green', showgrid=False, rangeslider_visible=True,
                                             rangeselector=dict(

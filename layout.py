@@ -16,11 +16,13 @@ with st.expander('Winning Stats For The Year 2022', expanded=True):
         
 st.header("Design 2: simple side by side html view of metrics in mobile and laptop view")
 # HTML and CSS for side-by-side metrics
-html_code = """
+html_code = f"""
 <div style="display: flex; justify-content: space-around;">
     <div style="text-align: center;">
-        <h2>Metric 1</h2>
-        <p>1000000</p>
+        <h1>Metric 1</h1>
+        <h2>1000000</h2>
+        <h3>s&p: 70000000000</h3>
+        <p>"Basket underperformed s&p"</p>
         <h2>Metric 4</h2>
         <p>40%</p>        
     </div>
