@@ -21,8 +21,6 @@ html_code = f"""
     <div style="text-align: center;">
         <h1>Metric 1</h1>
         <h2>1000000</h2>
-        <h3>s&p: 70000000000</h3>
-        <p>"Basket underperformed s&p"</p>
         <h2>Metric 4</h2>
         <p>40%</p>        
     </div>
@@ -45,3 +43,14 @@ html_code = f"""
 st.markdown(html_code, unsafe_allow_html=True)
 
         
+'''
+<div style="display: flex; justify-content: space-around;">
+    <div style="text-align: center;">
+        <h1>Metric 1</h1>
+        <h2>1000000</h2>
+        <h3>s&p: 70000000000</h3>
+        <p>"Basket underperformed s&p"</p>
+        <h2>Metric 4</h2>
+        <p>40%</p>        
+    </div>
+'''
