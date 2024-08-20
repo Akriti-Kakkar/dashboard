@@ -19,8 +19,8 @@ st.header("Design 2: simple side by side html view of metrics in mobile and lapt
 html_code = f"""
 <div style="display: flex; justify-content: space-around;">
     <div style="text-align: center;">
-        <h1>Metric 1</h1>
-        <h2>1000000</h2>
+        <h2>Metric 1</h2>
+        <p>1000000</p>
         <h2>Metric 4</h2>
         <p>40%</p>        
     </div>
