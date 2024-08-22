@@ -584,7 +584,7 @@ class basket_analysis:
             st.markdown("<font color='green'><b><span style='font-size: 24px;'>🔝 Rankings Based On Returns</span></b></font>", unsafe_allow_html=True)
             st.table(mwr_frame)
             
-    def baskets_twr_page(self, basket, cap_data, ch, dep, cap_all, ch_all):
+    def baskets_twr_page(self, basket, cap_data, ch, dep):
         self.sh = self.sh
         green = [{'selector': 'th', 'props': '''background-color: #1d4e89; color:#FFFFFF;
             font-weight:bold'''}, {'selector': 'td', 'props': '''text-align: right;
@@ -592,20 +592,12 @@ class basket_analysis:
         red = [{'selector': 'th', 'props': 'background-color: red'}]
         ret_twr_data = pd.DataFrame(columns=['returns', 'ec'])
         ret_twr_data['returns'] = ch[basket]/cap_data[basket]
-        ret_twr_all = pd.DataFrame(columns=['returns', 'ec'])
-        ret_twr_all['returns'] = ch_all[basket]/cap_all[basket]   
-        start_all = ch_all.index.min().date()
-        end_all_ = ch_all.index.max().date()
         start = ch.index.min().date()
         end = ch.index.max().date()
-        allocation_all = cap_all.loc[pd.to_datetime(start_all), basket]
         allocation = cap_data.loc[pd.to_datetime(start), basket]
-        ind_data_all = self.index_data[start_all:end_all_]
         ind_data_twr = self.index_data[start:end]
         ret_twr_data['ec'] = (1 + ret_twr_data['returns']).cumprod() * allocation  
-        ind_data_twr['ec'] = (1 + ind_data_twr['returns']).cumprod() * allocation    
-        ret_twr_all['ec'] = (1 + ret_twr_all['returns']).cumprod() *  allocation_all
-        ind_data_all['ec'] = (1 + ind_data_all['returns']).cumprod() * allocation_all
+        ind_data_twr['ec'] = (1 + ind_data_twr['returns']).cumprod() * allocation     
         st.table(pd.DataFrame({'Starting Date': [start], 'Latest Ending Date': [end]},
                                   index=['TimeStamps']).style.set_table_styles(green, axis=1))
         mwr_placeholder100 = st.empty()
@@ -712,12 +704,8 @@ class basket_analysis:
         m_ret_ind = avg_monthly_twr(ind_data_twr, 'returns')
         mwr_comp18 = comparison(m_ret, m_ret_ind, "normal")
         mwr_em18 = comparison_emoji(mwr_comp18)
-        ret_twr_all['year'] = ret_twr_all.index.year
-        ret_twr_all1 = ret_twr_all[ret_twr_all['year'] == ret_twr_all['year'].max()]
-        ind_data_all['year'] = ind_data_all.index.year
-        ind_data_all1 = ind_data_all[ind_data_all['year'] == ind_data_all['year'].max()]
-        one_ret = last_n_twr(ret_twr_all1, 'returns', len(ret_twr_all1), False)
-        one_ret_ind = last_n_twr(ind_data_all1, 'returns', len(ind_data_all1), False)
+        one_ret = last_n_twr(ret_twr_data, 'returns', 252, False)
+        one_ret_ind = last_n_twr(ind_data_twr, 'returns', 252, False)
         mwr_comp19 = comparison(one_ret, one_ret_ind, "normal")
         mwr_em19 = comparison_emoji(mwr_comp19)
         od_ret = last_n_twr(ret_twr_data, 'returns', 1, False)
@@ -762,7 +750,7 @@ class basket_analysis:
                         'Starting Value', 'Deposits/Withdrawals',
                         'Ending Value', 'Mean Return', 
                         'Average Monthly Return',
-                        'Last 12 Months (YTD) Return', 'Stdev',
+                        'Last 12 Months Return', 'Stdev',
                         'CAGR', 'Annualized Volatility',
                         'Sharpe Ratio', 'Sortino Ratio', 
                         'Average Drawdown', 'Maximum Drawdown',
@@ -974,10 +962,6 @@ class basket_analysis:
                             """,
                             unsafe_allow_html=True,
                         )   
-                        cap_data_all = cap_data[ind1:indl]
-                        mtm_data_all = mtm_data[ind1:indl] 
-                        change_all = change_data[ind1:indl]   
-                        mtm_forex_all = mtm_data_forex[ind1:indl]                                           
                         cap_data = cap_data[start_:end_]
                         change_data = change_data[start_:end_]
                         deposit_data = deposit_data[start_:end_]
@@ -1132,8 +1116,7 @@ class basket_analysis:
                                     cap_data7 = cap_data.iloc[-60:]
                                     change_data7 = change_data.iloc[-60:]
                                     deposit_data7 = deposit_data.iloc[-60:]
-                                    self.baskets_twr_page(x, cap_data7, change_data7, deposit_data7,
-                                                          cap_data_all, change_all) 
+                                    self.baskets_twr_page(x, cap_data7, change_data7, deposit_data7) 
                                 elif st.session_state["button21"] == True:
                                     st.session_state["button60"] = False
                                     st.success(f"""You are viewing 21-Day duration TWR stats based 
@@ -1141,13 +1124,11 @@ class basket_analysis:
                                     cap_data8 = cap_data.iloc[-21:]
                                     change_data8 = change_data.iloc[-21:]
                                     deposit_data8 = deposit_data.iloc[-21:]     
-                                    self.baskets_twr_page(x, cap_data8, change_data8, deposit_data8,
-                                                          cap_data_all, change_all) 
+                                    self.baskets_twr_page(x, cap_data8, change_data8, deposit_data8) 
                                 elif (st.session_state["button60"]!=True) and (st.session_state["button21"]!=True):                               
                                     st.success(f"""You are viewing TWR stats based 
                                                on change amounts for {x} that started on {b}""")                                       
-                                    self.baskets_twr_page(x, cap_data, change_data, deposit_data,
-                                                         cap_data_all, change_all)
+                                    self.baskets_twr_page(x, cap_data, change_data, deposit_data)
                             if locals()[f"{x}_stats1"] == 'MTM':
                                 if st.session_state.get(f"button60") != True:
                                     st.session_state["button60"] = locals()[f"{x}_inbut"]  
@@ -1168,8 +1149,7 @@ class basket_analysis:
                                     cap_data9 = cap_data.iloc[-60:]
                                     mtm_data_forex9 = mtm_data_forex.iloc[-60:]
                                     deposit_data9 = deposit_data.iloc[-60:]
-                                    self.baskets_twr_page(x, cap_data9, mtm_data_forex9, deposit_data9,
-                                                          cap_data_all, mtm_forex_all) 
+                                    self.baskets_twr_page(x, cap_data9, mtm_data_forex9, deposit_data9) 
                                 elif st.session_state["button21"] == True:
                                     st.session_state["button60"] = False
                                     st.success(f"""You are viewing 21-Day duration TWR stats based 
@@ -1177,13 +1157,11 @@ class basket_analysis:
                                     cap_data10 = cap_data.iloc[-21:]
                                     mtm_data_forex10 = mtm_data_forex.iloc[-21:]
                                     deposit_data10 = deposit_data.iloc[-21:]     
-                                    self.baskets_twr_page(x, cap_data10, mtm_data_forex10, deposit_data10,
-                                                          cap_data_all, mtm_forex_all) 
+                                    self.baskets_twr_page(x, cap_data10, mtm_data_forex10, deposit_data10) 
                                 elif (st.session_state["button60"]!=True) and (st.session_state["button21"]!=True):                                
                                     st.success(f"""You are viewing TWR stats based 
                                                on mtm amounts for {x} that started on {b}""")                                      
-                                    self.baskets_twr_page(x, cap_data, mtm_data_forex, deposit_data,
-                                                          cap_data_all, mtm_forex_all)    
+                                    self.baskets_twr_page(x, cap_data, mtm_data_forex, deposit_data)    
                             if locals()[f"{x}_stats1"] == 'MTM (Exc. Forex)':
                                 if st.session_state.get(f"button60") != True:
                                     st.session_state["button60"] = locals()[f"{x}_inbut"]  
@@ -1204,8 +1182,7 @@ class basket_analysis:
                                     cap_data11 = cap_data.iloc[-60:]
                                     mtm_data11 = mtm_data.iloc[-60:]
                                     deposit_data11 = deposit_data.iloc[-60:]
-                                    self.baskets_twr_page(x, cap_data11, mtm_data11, deposit_data11,
-                                                          cap_data_all, mtm_data_all) 
+                                    self.baskets_twr_page(x, cap_data11, mtm_data11, deposit_data11) 
                                 elif st.session_state["button21"] == True:
                                     st.session_state["button60"] = False
                                     st.success(f"""You are viewing 21-Day duration TWR stats based 
@@ -1213,13 +1190,11 @@ class basket_analysis:
                                     cap_data12 = cap_data.iloc[-21:]
                                     mtm_data12 = mtm_data.iloc[-21:]
                                     deposit_data12 = deposit_data.iloc[-21:]     
-                                    self.baskets_twr_page(x, cap_data12, mtm_data12, deposit_data12,
-                                                          cap_data_all, mtm_data_all)  
+                                    self.baskets_twr_page(x, cap_data12, mtm_data12, deposit_data12)  
                                 elif (st.session_state["button60"]!=True) and (st.session_state["button21"]!=True):                               
                                     st.success(f"""You are viewing TWR stats based 
                                                on mtm (exc. forex) amounts for {x} that started on {b}""")                                      
-                                    self.baskets_twr_page(x, cap_data, mtm_data, deposit_data,
-                                                          cap_data_all, mtm_data_all)                                                               
+                                    self.baskets_twr_page(x, cap_data, mtm_data, deposit_data)                                                               
                
                 
         if baskets_radio == text11:
